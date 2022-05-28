@@ -1,31 +1,22 @@
-# Gladiatus Venta Rapida
-¿Cansado de colocar el precio manualmente al vender en el mercado de la alianza?
+# Gladiatus Tools
+### Este script añade funcionalidades específicas para hacer más amigable la experiencia de juego de Gladiatus.
 
-### Este script se hizo por esta razón:
+##Funciones:
+#### Notificaciones
+Se han añadido unas notificaciones en la esquina superior derecha que brindan información de cuantos rotativos puede comprar con el oro que tiene actualmente.
 
-Ahora en la pantalla del mercado de la alianza verás unos botones que venderán automáticamente el objeto que pongas por el precio que indica.  
+#### Paquetes
+Se ha añadido un botón que coloca los objetos al costado del inventario, según una categoría a seleccionar (por defecto Mercado), esto a fin de no tener que buscarlos a lo largo de los demás paquetes, es recomendado utilizar la extencion Crazy Addon y colocar el agrupar paquetes en 10 o más ya que busca el objeto dentro de los que la página abierta tenga disponibles.
+> El valor de la categoría se almacena automáticamente.
 
-## Los precios que contempla el script son:
-|Precio|Valor en Número|
-|-|-|
-|50k|`50.000`|
-|100k|`100.000`|
-|200k|`200.000`|
-|500k|`500.000`|
-|1kk|`1.000.000`|
+#### Mercado de Alianza
+Se han añadido botones de venta rápidos con los valores de 50, 100, 200, 250, 500, y 1kk; de manera que al precionar alguno de estos botones se venderá por el precio que esté marcado y seleccionará la duración que se elija.
+> El valor de la duración se almacena automáticamente.
 
-# Gladiatus Quick Sale
-Tired of manually setting the price when selling in the alliance marketplace?
+#### Subasta
+Se ha añadido un botón que comprará todos los alimentos que estén en la página o hasta que no tengas oro lo que suceda primero, no sobrepujará a los aliados pero si a los rivales
+> Posteriormente se añadiran configuraciones
 
-### This script was made for this reason:
-
-Now on the alliance marketplace screen you will see some buttons that will automatically sell the object you put in for the price it indicates.  
-
-## The prices that the script contemplates are:
-|Price|Value in Number|
-|-|-|
-|50k|`50.000`|
-|100k|`100.000`|
-|200k|`200.000`|
-|500k|`500.000`|
-|1kk|`1,000,000`||
+#### Fundición
+Se ha añadido una funcionalidad que trabaja de la mano con la extensión Time Saver, lo que hace es fundir todos los objetos que estén en el inventario seleccionado, además también está la función de guardar los recursos y después fundir.
+> Para que funcione este apartado es requerido la extencion Time Saver
