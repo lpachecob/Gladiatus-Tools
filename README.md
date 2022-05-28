@@ -1,7 +1,7 @@
 # Gladiatus Tools
 ### Este script añade funcionalidades específicas para hacer más amigable la experiencia de juego de Gladiatus⚔.
 
-##Funciones:
+## Funciones:
 #### Notificaciones
 Se han añadido unas notificaciones en la esquina superior derecha que brindan información de cuantos rotativos puede comprar con el oro que tiene actualmente.
 
