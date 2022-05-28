@@ -1,5 +1,5 @@
 # Gladiatus Tools
-### Este script añade funcionalidades específicas para hacer más amigable la experiencia de juego de Gladiatus.
+### Este script añade funcionalidades específicas para hacer más amigable la experiencia de juego de Gladiatus⚔.
 
 ##Funciones:
 #### Notificaciones
