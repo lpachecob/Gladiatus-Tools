@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.1.16
+// @version       0.1.17
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -130,7 +130,7 @@ class Menu{
             font-size: 18px;
         }
     }
-</style>
+            </style>
             <button id="MenuOpen" class="btnMenu"> <img style="height: 112px;" src="https://raw.githubusercontent.com/lpachecob/Gladiatus-Tools/main/GT_-removebg-preview.ico"></button>
             <div id="menuSidenav" class="menutools">
                  <h1>Configuración</h1>
