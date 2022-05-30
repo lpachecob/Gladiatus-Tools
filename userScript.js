@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.1.16
+// @version       0.1.20
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
