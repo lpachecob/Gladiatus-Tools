@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.1.17
+// @version       0.1.18
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -10,9 +10,22 @@
 // @license       MIT
 // ==/UserScript==
 
+//global variables
+const getURL = window.location.search.split("&");
+const oro = parseInt(document.getElementById("sstat_gold_val").innerText.replace(/\./g, ''));
+
+var dobleClickEvent = document.createEvent('MouseEvents');
+dobleClickEvent.initEvent('dblclick', true, true);
+
+let sh;
+for (let element of getURL) {
+    if(element.includes("sh") == true){
+        sh = element
+    }
+}
+
 class GladiatusTools{
     static SetTool(){
-        const getURL = window.location.search.split("&")
         const mainMenu = document.getElementById("mainmenu");
         if (getURL[0] == "?mod=guildMarket" &&	getURL[1] != "submod=control") {
             MarketHelps();
@@ -32,6 +45,8 @@ class GladiatusTools{
     static Run(){
         GladiatusTools.SetTool();
         Menu.Dibujar();
+        Notificaciones.Rotativos();
+        GuardarOro.Run();
         ExtenderBotones.Paquetes();
         window.addEventListener("load", () => {
             localStorage.TimeSaverExist = TimeSaver.Exist();
@@ -60,6 +75,28 @@ class insertOnPage{
     }
 }
 
+class Observer{
+    static ForRemovedNodes(ItemForWait, instructions){
+        const observer = new MutationObserver((mutationList) => {
+            mutationList.forEach((mutation)=> {
+                if(mutation.removedNodes.length){
+                    instructions();
+
+                }
+            })
+        });
+        // Opcions para el observer
+        const observerOptions = {
+            attributes: true,
+            childList: true,
+            subtree: true,
+            characterData: false,
+            attributeOldValue: false,
+            characterDataOldValue: false
+        };
+        observer.observe(ItemForWait, observerOptions);
+    }
+}
 
 class Menu{
     static Dibujar(){
@@ -130,7 +167,8 @@ class Menu{
             font-size: 18px;
         }
     }
-            </style>
+</style>
+
             <button id="MenuOpen" class="btnMenu"> <img style="height: 112px;" src="https://raw.githubusercontent.com/lpachecob/Gladiatus-Tools/main/GT_-removebg-preview.ico"></button>
             <div id="menuSidenav" class="menutools">
                  <h1>Configuración</h1>
@@ -151,7 +189,6 @@ class Menu{
                 container.style.display = 'none';
             }
         });
-        Configuracion.Notificaciones();
     }
     static openNav() {
         document.getElementById("menuSidenav").style.display = "block";
@@ -166,17 +203,20 @@ class Menu{
     }
 }
 
-class Configuracion{
-    static Notificaciones(){
+class Notificaciones{
+    static Rotativos(){
         Menu.addConfig(`
         <label>
             <h2>Notificaciones</h2>
             <ul><input type="checkbox" id="NotificarOro" style=""> Notifica si tengo oro para guardar</ul>
-        </label>`);
+            <ul>
+            
+            </ul>
+        </label>
+        `);
 
-        let oro = parseFloat(document.getElementById("sstat_gold_val").textContent);
         let NotificarOro = document.getElementById("NotificarOro"); //.checked indica si está activo o no
-        if (JSON.parse(localStorage.NotificarOro) == undefined) {
+        if (localStorage.NotificarOro == undefined) {
             localStorage.NotificarOro = NotificarOro.checked
         } else {
             NotificarOro.checked = JSON.parse(localStorage.NotificarOro);
@@ -186,224 +226,50 @@ class Configuracion{
         })
 
         if (JSON.parse(localStorage.NotificarOro) == true) {
-            console.log("aqui")
-            if (oro > 50.000) {
-                let mensaje = "";
-                if (Math.floor(oro / 50.000) >= 2) {
-                    mensaje += `Empaqueta ` + Math.floor(oro / 50.000) + ` rotativos de 50k `
-                } else if (Math.floor(oro / 50.000) == 1) {
-                    mensaje += `Empaqueta ` + Math.floor(oro / 50.000) + ` rotativo de 50k `
-                }
-                if (Math.floor(oro / 100.000) >= 2) {
-                    mensaje += `Empaqueta ` + Math.floor(oro / 100.000) + ` rotativos de 100k `
-                } else if (Math.floor(oro / 100.000) == 1) {
-                    mensaje += `Empaqueta ` + Math.floor(oro / 100.000) + ` rotativo de 100k `
-                }
-                if (Math.floor(oro / 200.000) >= 2) {
-                        mensaje += `Empaqueta ` + Math.floor(oro / 200.000) + ` rotativos de 100k `
-                } else if (Math.floor(oro / 200.000) == 1) {
-                    mensaje += `Empaqueta ` + Math.floor(oro / 200.000) + ` rotativo de 200k `
-                }
-                if (Math.floor(oro / 500.000) >= 2) {
-                    mensaje += `Empaqueta ` + Math.floor(oro / 500.000) + ` rotativos de 100k `
-                } else if (Math.floor(oro / 500.000) == 1) {
-                    mensaje += `Empaqueta ` + Math.floor(oro / 500.000) + ` rotativo de 500k `
-                }
-                if (Math.floor(oro / 1000.000) >= 2) {
-                    mensaje += `Empaqueta ` + Math.floor(oro / 1000.000) + ` rotativos de 100k `
-                } else if (Math.floor(oro / 1000.000) == 1) {
-                    mensaje += `Empaqueta ` + Math.floor(oro / 1000.000) + ` rotativo de 1kk `
-                }
-                if (mensaje != "") {
-                    document.getElementById("mmonetbar").insertAdjacentHTML(
-                        "beforeend",
-                        `
+            Notificaciones.Mensaje();
+        }
+
+    }
+    static Mensaje(){
+        if (oro > 50000) {
+            let mensaje = "";
+            if (Math.floor(oro / 50000) >= 2) {
+                mensaje += `Empaqueta ` + Math.floor(oro / 50000) + ` rotativos de 50k `
+            } else if (Math.floor(oro / 50000) == 1) {
+                mensaje += `Empaqueta ` + Math.floor(oro / 50000) + ` rotativo de 50k `
+            }
+            if (Math.floor(oro / 100000) >= 2) {
+                mensaje += `Empaqueta ` + Math.floor(oro / 100000) + ` rotativos de 100k `
+            } else if (Math.floor(oro / 100000) == 1) {
+                mensaje += `Empaqueta ` + Math.floor(oro / 100000) + ` rotativo de 100k `
+            }
+            if (Math.floor(oro / 200000) >= 2) {
+                mensaje += `Empaqueta ` + Math.floor(oro / 200000) + ` rotativos de 100k `
+            } else if (Math.floor(oro / 200000) == 1) {
+                mensaje += `Empaqueta ` + Math.floor(oro / 200000) + ` rotativo de 200k `
+            }
+            if (Math.floor(oro / 500000) >= 2) {
+                mensaje += `Empaqueta ` + Math.floor(oro / 500000) + ` rotativos de 100k `
+            } else if (Math.floor(oro / 500000) == 1) {
+                mensaje += `Empaqueta ` + Math.floor(oro / 500000) + ` rotativo de 500k `
+            }
+            if (Math.floor(oro / 1000000) >= 2) {
+                mensaje += `Empaqueta ` + Math.floor(oro / 1000000) + ` rotativos de 100k `
+            } else if (Math.floor(oro / 1000000) == 1) {
+                mensaje += `Empaqueta ` + Math.floor(oro / 1000000) + ` rotativo de 1kk `
+            }
+            if (mensaje != "") {
+                document.getElementById("mmonetbar").insertAdjacentHTML(
+                    "beforeend",
+                    `
                         <a href="game/index.php?mod=guildMarket" style="display: contents;">
                              <div id="testnoti" class="notification-box notification-info" style="position: fixed;right: 0px;"><div class="icon"></div>` + mensaje + `</div>
                         </a>
                         <style>/* Notifications */ .notification-box{cursor: pointer;background-position: 15px center;background-repeat: no-repeat;box-shadow: 0 0 12px #000;color: #FFFFFF;margin: 0 0 6px;opacity: 0.9;padding: 5px 5px 5px 28px;width: 200px;white-space: pre-wrap; z-index: 10000;}.notification-info{background-color: #2F96B4;border: 1px solid #267890;}<style>
                         `);
-                }
-            }
-        }
-
-    }
-}
-
-
-function autoGuardarOro() {
-    console.log("entramos")
-    let oro = parseFloat(document.getElementById("sstat_gold_val").textContent);
-    let ObjetosMercado, elements, elementsArray, elementsOnlyTR = [], itemsCanBuy = [];
-    var dobleClickEvent = document.createEvent ('MouseEvents');
-    dobleClickEvent.initEvent ('dblclick', true, true);
-    if (
-	window.location.search.split("&")[0] == "?mod=guildMarket" &&
-	window.location.search.split("&")[1] != "submod=control"
-    ) {
-        ObjetosMercado = document.getElementById("market_item_table").children[0];
-        elements = document.getElementById("market_item_table").children[0];
-        elementsArray = [].slice.call(elements.children);
-        for (let index = 0; index < elementsArray.length; index++) {
-		let element = elementsArray[index];
-		if (element.tagName == "TR") {
-			elementsOnlyTR.push(element)
-		}
-	}
-
-        for (let item of elementsOnlyTR) {
-            if (item.children[0].children[0] != undefined) {
-                itemsCanBuy.push(item)
             }
         }
     }
-
-    let GuardarOro = document.getElementById("GuardarOro"); //.checked indica si está activo o no
-    let TriggerCantidadOro = document.getElementById("TriggerCantidadOro");
-    if (JSON.parse(localStorage.GuardarOro) == undefined) {
-        localStorage.GuardarOro = GuardarOro.checked
-    } else {
-        GuardarOro.checked = JSON.parse(localStorage.GuardarOro);
-    }
-    GuardarOro.addEventListener("change", () => {
-        localStorage.GuardarOro = GuardarOro.checked;
-    })
-
-    if (localStorage.TriggerCantidadOro == undefined) {
-        localStorage.TriggerCantidadOro = parseFloat(TriggerCantidadOro.value)
-    } else {
-        TriggerCantidadOro.value = localStorage.TriggerCantidadOro
-    }
-
-    TriggerCantidadOro.addEventListener("change", () => {
-        localStorage.TriggerCantidadOro = parseFloat(TriggerCantidadOro.value)
-    })
-    if (GuardarOro.checked == true){
-        if (oro > localStorage.TriggerCantidadOro && window.location.search.split("&")[0] != "?mod=guild") {
-            if(localStorage.Comprar != "ir a comprar - Mercado" || localStorage.Comprar != "comprando" || localStorage.Comprar != "comprado"){
-                localStorage.Comprar = "ir a comprar - Alianza"
-
-            }
-        }
-
-
-        // Guardar oro
-
-        if (localStorage.Comprar == "ir a comprar - Alianza"){
-            console.log(localStorage.Comprar)
-            let alianzaBtn = document.getElementsByClassName("menuitem advanced_menu_link");
-            for (let index = 0; index < alianzaBtn.length; index++) {
-                if(alianzaBtn[index].text == "Alianza" && alianzaBtn[index].text != undefined){
-                    document.getElementsByClassName("menuitem advanced_menu_link")[index].click()
-                }
-            }
-            localStorage.Comprar = "ir a comprar - Mercado";
-        }
-        if(localStorage.Comprar == "ir a comprar - Mercado"){
-            console.log(localStorage.Comprar)
-            document.getElementById("guild_market_div").click()
-            localStorage.Comprar = "comprando";
-        }
-        if(localStorage.Comprar == "comprando"){
-            console.log(localStorage.Comprar)
-        let elements = document.getElementById("market_table").children[0].children[0];
-            let elementsArray = [].slice.call(elements.children);
-            let itemsParaComprar = [];
-            for (let index = 0; index < elementsArray.length; index++) {
-                let element = elementsArray[index];
-                if(element.tagName == "TR"){
-                    if(element.children[0].children[0] != undefined){
-                        itemsParaComprar.push(element)
-                    }
-                }
-            }
-            let oroConvertido = parseFloat(document.getElementById("sstat_gold_val").textContent.replace(/\./g, ''));
-            let preciosTotales = []
-            let preciosOrdenados = []
-            let comprarMayor = []
-            for (let item of itemsParaComprar ) {
-                let costo = parseFloat(item.children[2].innerText.replace(/\./g, ''));
-                let costoEmpaquetado = costo * 0.04
-            let total = costo + costoEmpaquetado;
-                preciosTotales.push(total)
-            }
-
-
-            preciosOrdenados = preciosTotales.sort(function(a, b){return b - a});
-            for (let total of preciosOrdenados) {
-                if(oroConvertido >= total){
-                    oroConvertido = oroConvertido - total;
-                    comprarMayor.push(total);}
-            }
-            console.log(preciosOrdenados)
-
-
-            let compra = []
-            for (let valor of comprarMayor) {
-                for (let index = 0; index < itemsParaComprar.length; index++) {
-                    if(
-                        (parseFloat(itemsParaComprar[index].children[2].textContent.replace(/\./g, '')) +
-                         (parseFloat(itemsParaComprar[index].children[2].textContent.replace(/\./g, ''))*0.04))
-                        ==
-                        valor
-                ){
-                        localStorage.itemsComprados = itemsParaComprar[index].children[0].children[0].attributes[7].value+"?" + itemsParaComprar[index].children[2].innerText.replace(/\./g, '');
-                        break;
-                    }
-
-
-                }
-            }
-
-            if(comprarMayor.length == 0){
-                localStorage.Comprar = "comprado";
-            } else {
-            localStorage.Comprar = "comprando";
-            }
-        }
-        if(localStorage.Comprar == "comprado"){
-            // abre paquetes
-            if(window.location.search.split("&")[0] != "?mod=packages"){
-                document.getElementById("menue_packages").click()
-            }
-            let espaciosLibres = document.getElementsByClassName("ui-droppable grid-droparea")
-            let getInventarios = document.getElementsByClassName("awesome-tabs")
-            let inventarios = [];
-            for (let index = 0; index < getInventarios.length; index++) {
-                if(getInventarios[index].attributes[2] != undefined){
-                    if(getInventarios[index].attributes[2].textContent == "true"){
-                        inventarios.push(getInventarios[index])
-                    }
-                }
-            }
-            let paquetes = document.getElementById("packages").children;
-            let itemsComprados = localStorage.itemsComprados.split('?');
-            let itemsCompradosEncontrados = [];
-            for (let index = 0; index < paquetes.length; index++) {
-                for (let indexb = 0; indexb < itemsComprados.length; indexb++) {
-                    if(paquetes[index].className == "packageItem"){
-                        let item = paquetes[index].children[2].children[0].attributes[6].value.substring(0,65);
-                        if(item == itemsComprados[indexb].substring(0,65)){
-                            itemsCompradosEncontrados.push(paquetes[index])
-                        }
-
-                    }
-                }
-            }
-
-            if(itemsCompradosEncontrados.length > 0){
-                for (let index = 0; index < inventarios.length; index++) {
-                    for (let item of itemsCompradosEncontrados) {
-                        item.children[2].children[0].dispatchEvent(dobleClickEvent);
-                    }
-                    inventarios[index].click();
-                }
-            }
-
-
-        }
-    }
-
 }
 
 /**
@@ -1254,14 +1120,6 @@ class ExtenderBotones{
     static Paquetes(){
         let menue_packages = document.getElementById("menue_packages");
         let url = window.location.search.split("&");
-        let sh;
-        console.log(sh)
-        for (let element of url) {
-            if(element.includes("sh") == true){
-                sh = element
-            }
-        }
-        console.log(sh)
         insertOnPage.afterend(menue_packages,`
             <button id="extenderPaquetes" class="awesome-button extederPaquetes" title="Presiona para abrir el menú de paquetes">+</button>
             <div id="menuBotonPaquetes" class="menuBotonPaquetes">
@@ -1323,29 +1181,178 @@ class ExtenderBotones{
     }
 }
 
+class GuardarOro{
+    static UI(){
+        Menu.addConfig(`
+            <h3>Guardar Oro</h3>
+            <ul><label><input id="GuardarOroCheck" type="checkbox"> Guardar tu oro automaticamente<label></ul>
+            <ul>Oro Máximo a tener suelto: <input id="OroMaximoSuelto" style="width: 100px;background: white;" value="0"></ul>
+        `);
+        let GuardarOroCheck = document.getElementById("GuardarOroCheck");
+        let OroMaximoSuelto = document.getElementById("OroMaximoSuelto");
+
+        if (localStorage.GuardarOroCheck == undefined) {
+            localStorage.GuardarOroCheck = GuardarOroCheck.checked
+        } else {
+            GuardarOroCheck.checked = JSON.parse(localStorage.GuardarOroCheck);
+        }
+        GuardarOroCheck.addEventListener("change", () => {
+            localStorage.GuardarOroCheck = GuardarOroCheck.checked;
+        })
+
+        if (localStorage.OroMaximoSuelto == undefined) {
+            localStorage.OroMaximoSuelto = OroMaximoSuelto.value
+        } else {
+            OroMaximoSuelto.value = localStorage.OroMaximoSuelto;
+        }
+        OroMaximoSuelto.addEventListener("input", () => {
+            localStorage.OroMaximoSuelto = OroMaximoSuelto.value;
+        })
+    }
+    static VerSiTengoOro(oroTrigger){
+        let oroTriggerParse = parseInt(oroTrigger.replace(/\./g, ''))
+        if(oro > oroTriggerParse){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    static ItemsParaComprar(){
+        if(getURL[0] == "?mod=guildMarket" &&	getURL[1] != "submod=control"){
+            let market_table = document.getElementById("market_table")
+            let market_table_trs = market_table.children[0].children[0].children
+            let itemsEnVenta = [];
+
+            for (let item of market_table_trs) {
+                if(item.tagName == "TR" &&
+                   !!item.children[5].children[0] == true &&
+                   item.children[5].children[0].name == "buy"){
+                    itemsEnVenta.push(item)
+                }
+            }
+            return itemsEnVenta;
+        } else {
+            return [];
+        }
+    }
+
+    static sComprarTodo(){
+        let OroMaximoSuelto = document.getElementById("OroMaximoSuelto").value;
+        let inv = document.getElementById("inv");
+
+        if((!localStorage.CompraItem=="" && !localStorage.CompraVinculado=="" && !localStorage.CompraPrecioCompra=="" && localStorage.itemEnInventario == "No") == true){
+            console.log("Item Comprado ir a recogerlo")
+            if(getURL[0] != "?mod=packages"){
+                document.getElementById("menue_packages").click()
+            }
+            if(getURL[0] == "?mod=packages"){
+                
+            }
+        }else{
+            if(localStorage.itemEnInventario == "Si"){
+                if(getURL[0] != "?mod=guildMarket"){
+                    window.location.replace("index.php?mod=guildMarket&s=pd&"+sh)
+                }
+            }
+
+        }
+    }
+    static VenderItem(){
+        window.addEventListener("load", ()=>{
+            let items = document.getElementById("inv").children;
+            for (let item of items) {
+                for(let attribute of item.attributes){
+                    if(attribute.name == "data-tooltip"){
+                        if(attribute.textContent.slice(0,19).split(",")[0] == localStorage.CompraItem.slice(0,19)){
+                            item.dispatchEvent(dobleClickEvent);
+                            setTimeout(function () {
+                                document.getElementById("preis").value = localStorage.CompraPrecioCompra;
+                                document.getElementById("dauer").selectedIndex = 2;
+                                // document.getElementsByName("anbieten")[0].click();
+                                localStorage.itemEnInventario = "No"
+                                localStorage.CompraItem = "";
+                                localStorage.CompraVinculado = "";
+                                localStorage.CompraPrecioCompra = "";
+                            }, 2000);
+                        }
+                    }
+                }
+            }
+
+        })
+    }
+    static CogerDeInventario(){
+         let inv = document.getElementById("inv");
+        document.getElementById("buscarRotativos").click()
+        let items = document.getElementById("MercadoFavoritos").children;
+        for (let index = 1; index < items.length; index++) {
+            let item = items[index].children[2].children[0];
+            for (let attribute of item.attributes) {
+                if(attribute.name == "data-tooltip"){
+                    localStorage.CompraItem_Comprobar = attribute.textContent.slice(0,22).split(",")[0]
+                }
+            }
+            if(localStorage.CompraItem_Comprobar.slice(0,19) == localStorage.CompraItem.slice(0,19)){
+                Observer.ForRemovedNodes(inv, ()=>{
+                    item.dispatchEvent(dobleClickEvent);
+                    localStorage.itemEnInventario = "Si";
+                });
+
+            }
+        }
+    }
+    static ComprarTodo(){
+        let OroMaximoSuelto = document.getElementById("OroMaximoSuelto").value;
+        if(GuardarOro.VerSiTengoOro(OroMaximoSuelto) == true){
+            let itemsComprados = [];
+            for(let item of GuardarOro.ItemsParaComprar()){
+                let itemPrice = parseInt(item.children[2].textContent.replace(/\./g, ''));
+                if(itemPrice<oro){
+                    oro = oro - itemPrice;
+                    for(let attribute of item.children[0].children[0].attributes){
+                        if(attribute.name == "data-tooltip"){
+                            let objeto = attribute.textContent.slice(0,200).split(",");
+                            let contador = 0;
+                            for (let elemento of objeto) {
+                                if(elemento.includes('#')==false){
+                                    if(contador==0){
+                                        localStorage.CompraItem = elemento;
+                                    }
+                                    if(contador==1){
+                                        localStorage.CompraVinculado = elemento;
+                                    }
+                                    contador++;
+                                }
+                                if(contador>2){
+                                    break;
+                                }
+                            }
+                            localStorage.CompraPrecioCompra = itemPrice;
+                            //itemsComprados.push(atributosGuardar)
+                        }
+                        }
+                    item.children[5].children[0].click();
+                }
+            }
+            //Guardar Objetos en local storage
+            //localStorage.test3 = JSON.stringify({"test":"testContend"})
+            //let test = JSON.parse(localStorage.test3)
+        }
+    }
+
+    static Run(){
+        GuardarOro.UI();
+        let OroMaximoSuelto = document.getElementById("OroMaximoSuelto").value;
+        localStorage.AutoGuardarOro = "NoGuardado";
+        console.log(localStorage.AutoGuardarOro, OroMaximoSuelto)
+    }
+}
 
 //////////////////////////////////////////////////////////////////////
 /**
 * run script
 */
 GladiatusTools.Run();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
