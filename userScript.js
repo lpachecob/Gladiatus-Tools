@@ -1,14 +1,15 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.1.18
+// @version       0.1.16
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
 // @match         *.gladiatus.gameforge.com/game/index.php*
-// @icon          https://raw.githubusercontent.com/lpachecob/Gladiatus-Tools/main/GT_-removebg-preview.ico
+// @icon          https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/favicon.ico
 // @license       MIT
 // ==/UserScript==
+
 
 //global variables
 const getURL = window.location.search.split("&");
@@ -169,7 +170,7 @@ class Menu{
     }
 </style>
 
-            <button id="MenuOpen" class="btnMenu"> <img style="height: 112px;" src="https://raw.githubusercontent.com/lpachecob/Gladiatus-Tools/main/GT_-removebg-preview.ico"></button>
+            <button id="MenuOpen" class="btnMenu"> <img style="height: 112px;" src="https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/favicon.ico"></button>
             <div id="menuSidenav" class="menutools">
                  <h1>Configuración</h1>
                  <hr/>
@@ -206,14 +207,17 @@ class Menu{
 class Notificaciones{
     static Rotativos(){
         Menu.addConfig(`
+
         <label>
             <h2>Notificaciones</h2>
             <ul><input type="checkbox" id="NotificarOro" style=""> Notifica si tengo oro para guardar</ul>
-            <ul>
-            
-            </ul>
         </label>
+        <label></label>
+
         `);
+
+
+
 
         let NotificarOro = document.getElementById("NotificarOro"); //.checked indica si está activo o no
         if (localStorage.NotificarOro == undefined) {
@@ -265,7 +269,9 @@ class Notificaciones{
                         <a href="game/index.php?mod=guildMarket" style="display: contents;">
                              <div id="testnoti" class="notification-box notification-info" style="position: fixed;right: 0px;"><div class="icon"></div>` + mensaje + `</div>
                         </a>
-                        <style>/* Notifications */ .notification-box{cursor: pointer;background-position: 15px center;background-repeat: no-repeat;box-shadow: 0 0 12px #000;color: #FFFFFF;margin: 0 0 6px;opacity: 0.9;padding: 5px 5px 5px 28px;width: 200px;white-space: pre-wrap; z-index: 10000;}.notification-info{background-color: #2F96B4;border: 1px solid #267890;}<style>
+                        <style>
+                        /* Notifications */ .notification-box{cursor: pointer;background-position: 15px center;background-repeat: no-repeat;box-shadow: 0 0 12px #000;color: #FFFFFF;margin: 0 0 6px;opacity: 0.9;padding: 5px 5px 5px 28px;width: 200px;white-space: pre-wrap; z-index: 10000;}.notification-info{background-color: #2F96B4;border: 1px solid #267890;}
+                        <style>
                         `);
             }
         }
@@ -1145,7 +1151,7 @@ class ExtenderBotones{
                     cursor: pointer;
                  }
                  .food-icon {
-                    background: transparent url(https://raw.githubusercontent.com/lpachecob/Gladiatus-Tools/main/main_buttons.png) -395px 0px no-repeat;
+                    background: transparent url(https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/buttons.png) -395px 0px no-repeat;
                  }
                  .extederPaquetes {
                     position: absolute;
