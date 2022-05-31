@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.1.20
+// @version       0.1.21
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -29,7 +29,7 @@ class GladiatusTools{
     static SetTool(){
         const mainMenu = document.getElementById("mainmenu");
         if (getURL[0] == "?mod=guildMarket" &&	getURL[1] != "submod=control") {
-            MarketHelps();
+            Mercado.Run();
         } else if (getURL[0] == "?mod=guildMarket" && getURL[1] == "submod=control") {
             //comming soon
         } else if (getURL[0] == "?mod=auction") {
@@ -44,10 +44,10 @@ class GladiatusTools{
         }
     }
     static Run(){
-        GladiatusTools.SetTool();
         Menu.Dibujar();
+        GladiatusTools.SetTool();
         Notificaciones.Rotativos();
-        GuardarOro.Run();
+        //GuardarOro.Run();
         ExtenderBotones.Paquetes();
         window.addEventListener("load", () => {
             localStorage.TimeSaverExist = TimeSaver.Exist();
@@ -99,84 +99,41 @@ class Observer{
     }
 }
 
+class Formatter{
+    static abbreviateNumber(number){
+        var SI_SYMBOL = ["", "k", "kk", "kkk", "kkkk", "kkkkk", "kkkkkk"];
+
+        // what tier? (determines SI symbol)
+        var tier = Math.log10(Math.abs(number)) / 3 | 0;
+
+        // if zero, we don't need a suffix
+        if(tier == 0) return number;
+
+        // get suffix and determine scale
+        var suffix = SI_SYMBOL[tier];
+        var scale = Math.pow(10, tier * 3);
+
+        // scale the number
+        var scaled = number / scale;
+
+        // format number and add suffix
+        return scaled.toFixed(1) + suffix;
+    }
+}
+
 class Menu{
     static Dibujar(){
         document.body.insertAdjacentHTML("afterbegin",`
-<style>
-    .menutools {
-        display: none;
-        width: 422px;
-        height: -webkit-fill-available;
-        position: fixed;
-        z-index: 10000;
-        top: 0;
-        right: 0;
-        background-color: #111;
-        overflow-x: hidden;
-        padding-top: 16px;
-        padding-left: 12px;
-    }
-    .menutools a {
-        padding: 8px 8px 8px 32px;
-        text-decoration: none;
-        font-size: 25px;
-        color: #818181;
-        display: block;
-    }
-    .menutools a:hover {
-        color: #f1f1f1;
-    }
-    .menutools .closebtn {
-        position: absolute;
-        top: 0;
-        right: 25px;
-        font-size: 36px;
-        margin-left: 50px;
-    }
-    .menutools > h1{
-        color: #ffffff;
-    }
-    .menutools > h2{
-        color: #ffffff;
-    }
-    .menutools > h3{
-        color: #ffffff;
-    }
-    .menutools > label{
-        color: #ffffff;
-    }
-    .menutools > div{
-        color: #ffffff;
-    }
+            <style>
+                .menutools { display: none; width: 422px; height: -webkit-fill-available; position: fixed; z-index: 10000; top: 0; right: 0; background-color: #111; overflow-x: hidden; padding-top: 16px; padding-left: 12px; } .menutools a { padding: 8px 8px 8px 32px; text-decoration: none; font-size: 25px; color: #818181; display: block; } .menutools a:hover { color: #f1f1f1; } .menutools .closebtn { position: absolute; top: 0; right: 25px; font-size: 36px; margin-left: 50px; } .menutools > h1{ color: #ffffff; } .menutools > h2{ color: #ffffff; } .menutools > h3{ color: #ffffff; } .menutools > label{ color: #ffffff; } .menutools > div{ color: #ffffff; } .btnMenu{ font-size:20px; cursor:pointer; position: fixed; top: 134px; right: 4%; background: transparent; border: transparent; z-index: 10000; } @media screen and (max-height: 450px) { .menutools { padding-top: 15px; } .menutools a { font-size: 18px; } }
+            </style>
 
-    .btnMenu{
-         font-size:20px;
-         cursor:pointer;
-         position: fixed;
-         top: 134px;
-         right: 4%;
-         background: transparent;
-         border: transparent;
-         z-index: 10000;
-    }
-
-    @media screen and (max-height: 450px) {
-        .menutools {
-            padding-top: 15px;
-        }
-        .menutools a {
-            font-size: 18px;
-        }
-    }
-</style>
-
-            <button id="MenuOpen" class="btnMenu"> <img style="height: 112px;" src="https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/favicon.ico"></button>
+            <button id="MenuOpen" title="𝗖𝗢𝗡𝗙𝗜𝗚𝗨𝗥𝗔𝗖𝗜𝗢𝗡\nGLADIATUS TOOLS" class="btnMenu"> <img style="height: 112px;" src="https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/favicon.ico"></button>
             <div id="menuSidenav" class="menutools">
                  <h1>Configuración</h1>
                  <hr/>
                  <a id="CloseMenu" href="#" class="closebtn">&times;</a>
                  <div id="menuContent"></div>
-                 <!-- <label hidden><input type="checkbox" id="GuardarOro" style=""> Guardar oro automaticamente <input type="number" id="TriggerCantidadOro" placeholder="oro maximo a acumular" value="0" title="Ingresa la cantidad de oro máxima que acumulara tu personaje antes de guardarlo \n\nUtilizar el formato que usa el juego:\n- 50.000 = 50k\n- 100.000 = 100k\n- 500.000 = 500k\n- 1000.000 = 1kk"><hr></label> -->
             </div>
             `);
         let menuOpen = document.getElementById("MenuOpen");
@@ -207,17 +164,36 @@ class Menu{
 class Notificaciones{
     static Rotativos(){
         Menu.addConfig(`
-
-        <label>
-            <h2>Notificaciones</h2>
-            <ul><input type="checkbox" id="NotificarOro" style=""> Notifica si tengo oro para guardar</ul>
-        </label>
-        <label></label>
+        <h2>Notificaciones</h2>
+        <ul>
+            <label><input type="checkbox" id="NotificarOro" style=""> Notifica si tengo oro para guardar</label>
+        </ul>
+        <ul id="MontosNotificar" style="display: flex;background-color: white;width: 324px;height: auto;margin-left: 43px;padding: 6px;flex-direction: row;flex-wrap: wrap;">
+           <input type="number" title="Presiona ENTER para guardar." id="InputNotificarOro" placeholder="Oro" style="background-color: #bebebe;color: white;font-weight: bold;font-size: 12px;width: 79px;height: 23px;">
+        </ul>
 
         `);
 
+        let MontosNotificar = document.getElementById("MontosNotificar");
+        let InputNotificarOro = document.getElementById("InputNotificarOro");
+        let MontosGuardados = [];
 
+        if(localStorage.MontosGuardados == undefined){
+        localStorage.MontosGuardados = '["100000"]';
+        }else{
+        MontosGuardados = JSON.parse(localStorage.MontosGuardados)
+        }
 
+        InputNotificarOro.addEventListener("keypress",(input)=>{
+            if (input.key === 'Enter') {
+                if (!MontosGuardados.includes(InputNotificarOro.value) && InputNotificarOro.value != "") {
+                    MontosGuardados.push(InputNotificarOro.value);
+                    InputNotificarOro.value = "";
+                    localStorage.MontosGuardados = JSON.stringify(MontosGuardados.sort(function(a, b){return a - b}));
+                    window.location.reload()
+                }
+            }
+        });
 
         let NotificarOro = document.getElementById("NotificarOro"); //.checked indica si está activo o no
         if (localStorage.NotificarOro == undefined) {
@@ -231,390 +207,189 @@ class Notificaciones{
 
         if (JSON.parse(localStorage.NotificarOro) == true) {
             Notificaciones.Mensaje();
+            Notificaciones.MostrarRotativosSeleccionados();
+            Notificaciones.EliminarRotativo();
         }
 
     }
     static Mensaje(){
-        if (oro > 50000) {
-            let mensaje = "";
-            if (Math.floor(oro / 50000) >= 2) {
-                mensaje += `Empaqueta ` + Math.floor(oro / 50000) + ` rotativos de 50k `
-            } else if (Math.floor(oro / 50000) == 1) {
-                mensaje += `Empaqueta ` + Math.floor(oro / 50000) + ` rotativo de 50k `
+        let MontosGuardados = JSON.parse(localStorage.MontosGuardados);
+        let mensaje = "";
+
+        for(let monto of MontosGuardados){
+            if (Math.floor(oro / monto) >= 2) {
+                mensaje += `Empaqueta ` + Math.floor(oro / monto) + ` rotativos de `+ Formatter.abbreviateNumber(monto)+`\n`;
+            } else if (Math.floor(oro / monto) == 1) {
+                mensaje += `Empaqueta ` + Math.floor(oro / monto) + ` rotativo de `+ Formatter.abbreviateNumber(monto)+`\n`;
             }
-            if (Math.floor(oro / 100000) >= 2) {
-                mensaje += `Empaqueta ` + Math.floor(oro / 100000) + ` rotativos de 100k `
-            } else if (Math.floor(oro / 100000) == 1) {
-                mensaje += `Empaqueta ` + Math.floor(oro / 100000) + ` rotativo de 100k `
-            }
-            if (Math.floor(oro / 200000) >= 2) {
-                mensaje += `Empaqueta ` + Math.floor(oro / 200000) + ` rotativos de 100k `
-            } else if (Math.floor(oro / 200000) == 1) {
-                mensaje += `Empaqueta ` + Math.floor(oro / 200000) + ` rotativo de 200k `
-            }
-            if (Math.floor(oro / 500000) >= 2) {
-                mensaje += `Empaqueta ` + Math.floor(oro / 500000) + ` rotativos de 100k `
-            } else if (Math.floor(oro / 500000) == 1) {
-                mensaje += `Empaqueta ` + Math.floor(oro / 500000) + ` rotativo de 500k `
-            }
-            if (Math.floor(oro / 1000000) >= 2) {
-                mensaje += `Empaqueta ` + Math.floor(oro / 1000000) + ` rotativos de 100k `
-            } else if (Math.floor(oro / 1000000) == 1) {
-                mensaje += `Empaqueta ` + Math.floor(oro / 1000000) + ` rotativo de 1kk `
-            }
-            if (mensaje != "") {
-                document.getElementById("mmonetbar").insertAdjacentHTML(
-                    "beforeend",
-                    `
-                        <a href="game/index.php?mod=guildMarket" style="display: contents;">
-                             <div id="testnoti" class="notification-box notification-info" style="position: fixed;right: 0px;"><div class="icon"></div>` + mensaje + `</div>
-                        </a>
-                        <style>
-                        /* Notifications */ .notification-box{cursor: pointer;background-position: 15px center;background-repeat: no-repeat;box-shadow: 0 0 12px #000;color: #FFFFFF;margin: 0 0 6px;opacity: 0.9;padding: 5px 5px 5px 28px;width: 200px;white-space: pre-wrap; z-index: 10000;}.notification-info{background-color: #2F96B4;border: 1px solid #267890;}
-                        <style>
-                        `);
-            }
+        }
+
+        if (mensaje != "") {
+            document.getElementById("mmonetbar").insertAdjacentHTML("beforeend",`
+                <a href="game/index.php?mod=guildMarket" style="display: contents;">
+                    <div id="testnoti" class="notification-box notification-info" style="position: fixed;right: 0px;"><div class="icon"></div>` + mensaje + `</div>
+                </a>
+                <style>
+                    /* Notifications */ .notification-box{cursor: pointer;background-position: 15px center;background-repeat: no-repeat;box-shadow: 0 0 12px #000;color: #FFFFFF;margin: 0 0 6px;opacity: 0.9;padding: 5px 5px 5px 28px;width: 200px;white-space: pre-wrap; z-index: 10000;}.notification-info{background-color: #2F96B4;border: 1px solid #267890;}
+                <style>`);
+        }
+
+    }
+    static MostrarRotativosSeleccionados(){
+        let MontosGuardados = JSON.parse(localStorage.MontosGuardados);
+        let indiceDeRotativoBorrar;
+        let MontosNotificar = document.getElementById("MontosNotificar");
+        let contador = 0;
+        for(let monto of MontosGuardados){
+            insertOnPage.beforeend(MontosNotificar,`
+               <div style="border-style: groove;color: black;width: fit-content;padding: 2px;font-size: 12px;">
+                   `+Formatter.abbreviateNumber(monto)+`
+                   <button name="NotificaRotativoBorrar" data-index="`+contador+`" style="color: red;font-weight: bold;font-size: 16px;border: none;background: none;">x</button>
+               </div>
+           `)
+            contador++;
+        }
+    }
+    static EliminarRotativo(){
+        let MontosGuardados = JSON.parse(localStorage.MontosGuardados);
+        let NotificaRotativoBorrar = document.getElementsByName("NotificaRotativoBorrar")
+        for (let boton of NotificaRotativoBorrar) {
+            boton.addEventListener("click",()=>{
+                MontosGuardados.splice(boton.attributes[1].value,1)
+                localStorage.MontosGuardados = JSON.stringify(MontosGuardados.sort(function(a, b){return a - b}));
+                window.location.reload()
+            })
+
         }
     }
 }
 
-/**
- *  Adds quick sale buttons to the alliance marketplace
- */
-function MarketHelps() {
-    /* Getting the element with the id "sellForm" from the page. */
-    let panelVenta = document.getElementById("sellForm");
-	/* Getting the element with the id "preis" from the page. */
-    let inputPrecio = document.getElementById("preis");
+class Mercado{
+    static Config(){
+        Menu.addConfig(`
+            <h2>Mercado de la Alianza</h2>
+            <ul id="MercadoAlianza" style="display: flex;background-color: white;width: 324px;height: auto;margin-left: 43px;padding: 6px;flex-direction: row;flex-wrap: wrap;">
+                <input type="number" title="Presiona ENTER para guardar." id="InputMercadoAlianza" placeholder="Oro" style="background-color: #bebebe;color: white;font-weight: bold;font-size: 12px;width: 79px;height: 23px;">
+            </ul>
+        `);
+        let MercadoAlianza = document.getElementById("MercadoAlianza");
+        let InputMercadoAlianza = document.getElementById("InputMercadoAlianza");
+        let MontosMercado = [];
 
-    let inputDuracion = document.getElementById("dauer");
+        if(localStorage.MontosMercado == undefined){
+        localStorage.MontosMercado = '["100000"]';
+        }else{
+        MontosMercado = JSON.parse(localStorage.MontosMercado)
+        }
 
-    /* Getting the element with the name "anbieten" from the page. */
-    let botonVender = document.getElementsByName("anbieten")[0];
-    /* Getting the element with the id "market_inventory" from the page. */
-    let marketInventory = document.getElementById("market_inventory");
-	/* Getting the element with the id "sstat_gold_val" from the page and getting the text content of the
-	  element. Then it is converting the text content to a number. */
-	let oro = parseFloat(document.getElementById("sstat_gold_val").textContent);
+        InputMercadoAlianza.addEventListener("keypress",(input)=>{
+            if (input.key === 'Enter') {
+                if (!MontosMercado.includes(InputMercadoAlianza.value) && InputMercadoAlianza.value != "") {
+                    MontosMercado.push(InputMercadoAlianza.value);
+                    InputMercadoAlianza.value = "";
+                    localStorage.MontosMercado = JSON.stringify(MontosMercado.sort(function(a, b){return a - b}));
+                    window.location.reload()
+                }
+            }
+        });
+    }
+    static MostrarRotativosSeleccionados(){
+        let MontosMercado = JSON.parse(localStorage.MontosMercado);
+        let indiceDeRotativoBorrar;
+        let MercadoAlianza = document.getElementById("MercadoAlianza");
+        let contador = 0;
+        for(let monto of MontosMercado){
+            insertOnPage.beforeend(MercadoAlianza,`
+               <div style="border-style: groove;color: black;width: fit-content;padding: 2px;font-size: 12px;">
+                   `+Formatter.abbreviateNumber(monto)+`
+                   <button name="MercadoRotativoBorrar" data-index="`+contador+`" style="color: red;font-weight: bold;font-size: 16px;border: none;background: none;">x</button>
+               </div>
+           `)
+            contador++;
+        }
+    }
+    static EliminarRotativo(){
+        let MontosMercado = JSON.parse(localStorage.MontosMercado);
+        let NotificaRotativoBorrar = document.getElementsByName("MercadoRotativoBorrar")
+        for (let boton of NotificaRotativoBorrar) {
+            boton.addEventListener("click",()=>{
+                MontosMercado.splice(boton.attributes[1].value,1)
+                localStorage.MontosMercado = JSON.stringify(MontosMercado.sort(function(a, b){return a - b}));
+                window.location.reload()
+            })
 
-	let cajaVenta = document.getElementsByClassName("ui-droppable")[0];
+        }
+    }
+    static VentaRapida(){
+        let panelVenta = document.getElementById("sellForm");
+        let inputPrecio = document.getElementById("preis");
+        let inputDuracion = document.getElementById("dauer");
+        let botonVender = document.getElementsByName("anbieten")[0];
+        let marketInventory = document.getElementById("market_inventory");
+        let oro = parseFloat(document.getElementById("sstat_gold_val").textContent);
+        let cajaVenta = document.getElementsByClassName("ui-droppable")[0];
 
-	/* Adding HTML to the page. */
-	panelVenta.insertAdjacentHTML(
-		"beforebegin",
-		`
-	  <h2
-		   id="VentaRapidaMenuTitle"
-		   class="section-header"
-		   style="cursor: pointer;">
-		   Venta Rapida
-	  </h2>
-	  <section
-		   id="VentaRapidaMenu"
-		   style="display: block;">
-	  </section>`
-	);
+        insertOnPage.beforebegin(panelVenta,`
+            <h2 id="VentaRapidaMenuTitle" class="section-header" style="cursor: pointer;">Venta Rapida</h2>
+	        <section id="VentaRapidaMenu" style="display: block;"> <p>Coloca un item y elige el precio para vender.</p> </section>
+        `);
 
-	marketInventory.insertAdjacentHTML(
-		"afterbegin",
-		`
-	  <h2
-		   id="CalcularRotativosTitle"
-		   class="section-header"
-		   style="cursor: pointer;">
-		   Calcular Rotativos
-	  </h2>
-	  <section
-		   id="CalcularRotativos"
-		   style="display: block;">
-	  </section>
-	  `
-	);
+        let MontosMercado = JSON.parse(localStorage.MontosMercado);
+        let ventaRapidaMenu = document.getElementById("VentaRapidaMenu");
 
-	/* Getting the element with the id "VentaRapidaMenu" from the page. */
-	let ventaRapidaMenu = document.getElementById("VentaRapidaMenu");
+        for(let monto of MontosMercado){
+            insertOnPage.beforeend(ventaRapidaMenu,`
+             <button name="BotonVender" data-input="`+monto+`" class="awesome-button" style="margin:5px;" data-toggle="tooltip" title="Costo de venta: `+Formatter.abbreviateNumber(monto*0.04)+` 💰" >`+Formatter.abbreviateNumber(monto)+`</button>
+            `)
+        };
+        insertOnPage.beforeend(ventaRapidaMenu,`
+            <section id="" style="display: block;">
+                <p><small>Elegir duración</small></p>
+                <select id="SelectHora" size="1">
+				    <option value="1">2 h</option>
+				    <option value="2">8 h</option>
+				    <option value="3">24 h</option>
+		        </select>
+	        </section>`);
+        let selectHora = document.getElementById("SelectHora");
+        if (localStorage.SelectHora == undefined) {
+            localStorage.SelectHora = 1;
+            selectHora.value = 1;
+        } else {
+            selectHora.value = localStorage.SelectHora;
+        }
+        selectHora.addEventListener("change", (event) => {
+            localStorage.SelectHora = selectHora.value;
+        });
+        let ventaRapidaMenuTitle = document.getElementById("VentaRapidaMenuTitle");
+        ventaRapidaMenuTitle.addEventListener("click", () => {
+            if (ventaRapidaMenu.style.display == "none") {
+                ventaRapidaMenu.style.display = "block";
+            } else {
+                ventaRapidaMenu.style.display = "none";
+            }
+        });
 
-	/* Adding HTML to the page. */
-	ventaRapidaMenu.insertAdjacentHTML(
-		"beforeend",
-		`
-	  <p>Coloca un item y elige el precio para vender.</p>
-	  `
-	);
+        let BotononesVender = document.getElementsByName("BotonVender")
 
-	ventaRapidaMenu.insertAdjacentHTML(
-		"beforeend",
-		`
-	  <button
-		   id="buttonAdd50k"
-		   class="awesome-button"
-		   style="margin:5px;"
-		   data-toggle="tooltip"
-		   title="Costo de venta: 2.000 💰"
-		   disabled>
-		   50k
-	  </button>`
-	);
-	ventaRapidaMenu.insertAdjacentHTML(
-		"beforeend",
-		`
-	  <button
-		   id="buttonAdd100k"
-		   class="awesome-button"
-		   style="margin:5px;"
-		   data-toggle="tooltip"
-		   title="Costo de venta: 4.000 💰"
-		   disabled>
-		   100k
-	  </button>`
-	);
-	ventaRapidaMenu.insertAdjacentHTML(
-		"beforeend",
-		`
-	  <button
-		   id="buttonAdd200k"
-		   class="awesome-button"
-		   style="margin:5px;"
-		   data-toggle="tooltip"
-		   title="Costo de venta: 8.000 💰"
-		   disabled>
-		   200k
-	  </button>`
-	);
-    ventaRapidaMenu.insertAdjacentHTML(
-		"beforeend",
-		`
-	  <button
-		   id="buttonAdd250k"
-		   class="awesome-button"
-		   style="margin:5px;"
-		   data-toggle="tooltip"
-		   title="Costo de venta: 10.000 💰"
-		   disabled>
-		   250k
-	  </button>`
-	);
-	ventaRapidaMenu.insertAdjacentHTML(
-		"beforeend",
-		`
-	  <button
-		   id="buttonAdd500k"
-		   class="awesome-button"
-		   style="margin:5px;"
-		   data-toggle="tooltip"
-		   title="Costo de venta: 20.000 💰"
-		   disabled>
-		   500k
-	  </button>`
-	);
-	ventaRapidaMenu.insertAdjacentHTML(
-		"beforeend",
-		`
-	  <button
-		   id="buttonAdd1kk"
-		   class="awesome-button"
-		   style="margin:5px;"
-		   data-toggle="tooltip"
-		   title="Costo de venta: 40.000 💰"
-		   disabled>
-		   1kk
-	  </button>`
-	);
-	ventaRapidaMenu.insertAdjacentHTML(
-		"beforeend",
-		`
-	  <section
-		   id=""
-		   style="display: block;">
-		   <p><small>Elegir duración</small></p>
-		   <select
-				id="SelectHora"
-				size="1">
+        for (let boton of BotononesVender) {
+            boton.addEventListener("click",()=>{
+                inputPrecio.value = boton.attributes[1].value;
+                inputDuracion.value = localStorage.SelectHora;
+                botonVender.click();
+            })
 
-				<option value="1">2 h</option>
-				<option value="2">8 h</option>
-				<option value="3">24 h</option>
-		   </select>
-	  </section>`
-	);
+        }
 
-	let selectHora = document.getElementById("SelectHora");
-	if (localStorage.SelectHora == undefined) {
-		localStorage.SelectHora = 1;
-		selectHora.value = 1;
-	} else {
-		selectHora.value = localStorage.SelectHora;
-	}
-	selectHora.addEventListener("change", (event) => {
-		localStorage.SelectHora = selectHora.value;
-	});
-
-	/* Getting the element with the id "VentaRapidaMenuTitle" from the page. */
-	let ventaRapidaMenuTitle = document.getElementById("VentaRapidaMenuTitle");
-	/* Adding an event listener to the element with the id "VentaRapidaMenuTitle" from the page. When the
-	  user clicks on the element, the function will be executed. The function will check if the element
-	  with the id "VentaRapidaMenu" is visible or not. If it is visible, it will hide it. If it is hidden,
-	  it will show it. */
-	ventaRapidaMenuTitle.addEventListener("click", () => {
-		if (ventaRapidaMenu.style.display == "none") {
-			ventaRapidaMenu.style.display = "block";
-		} else {
-			ventaRapidaMenu.style.display = "none";
-		}
-	});
-
-	/* Adding an event listener to the element with the id "buttonAdd50k". When the user clicks on the
-	  element, the function will be executed. The function will set the value of the element with the id
-	  "preis" to 50000 and will click on the element with the name "anbieten". */
-	let add50k = document.getElementById("buttonAdd50k");
-	add50k.addEventListener("click", () => {
-		inputPrecio.value = 50000;
-		inputDuracion.value = localStorage.SelectHora;
-		botonVender.click();
-	});
-	/* Adding an event listener to the element with the id "buttonAdd100k". When the user clicks on the
-	  element, the function will be executed. The function will set the value of the element with the id
-	  "preis" to 100000 and will click on the element with the name "anbieten". */
-	let add100k = document.getElementById("buttonAdd100k");
-	add100k.addEventListener("click", () => {
-		inputPrecio.value = 100000;
-		botonVender.click();
-	});
-	/* Adding an event listener to the element with the id "buttonAdd200k". When the user clicks on the
-	  element, the function will be executed. The function will set the value of the element with the id
-	  "preis" to 200000 and will click on the element with the name "anbieten". */
-	let add200k = document.getElementById("buttonAdd200k");
-	add200k.addEventListener("click", () => {
-		inputPrecio.value = 200000;
-		inputDuracion.value = localStorage.SelectHora;
-		botonVender.click();
-	});
-
-    let add250k = document.getElementById("buttonAdd250k");
-	add250k.addEventListener("click", () => {
-		inputPrecio.value = 250000;
-		inputDuracion.value = localStorage.SelectHora;
-		botonVender.click();
-	});
-	/* Adding an event listener to the element with the id "buttonAdd500k". When the user clicks on the
-	  element, the function will be executed. The function will set the value of the element with the id
-	  "preis" to 500000 and will click on the element with the name "anbieten". */
-	let add500k = document.getElementById("buttonAdd500k");
-	add500k.addEventListener("click", () => {
-		inputPrecio.value = 500000;
-		inputDuracion.value = localStorage.SelectHora;
-		botonVender.click();
-	});
-	/* Adding an event listener to the element with the id "buttonAdd1kk". When the user clicks on the
-	  element, the function will be executed. The function will set the value of the element with the id
-	  "preis" to 1000000 and will click on the element with the name "anbieten". */
-	let add1kk = document.getElementById("buttonAdd1kk");
-	add1kk.addEventListener("click", () => {
-		inputPrecio.value = 1000000;
-		inputDuracion.value = localStorage.SelectHora;
-		botonVender.click();
-	});
-
-	/* Getting the element with the id "CalcularRotativos" from the page. */
-	let calcularRotativos = document.getElementById("CalcularRotativos");
-
-	/* Adding HTML to the page. */
-	calcularRotativos.insertAdjacentHTML(
-		"beforeend",
-		"<p>Puedes comprar los siguientes rotativos</p>"
-	);
-	calcularRotativos.insertAdjacentHTML(
-		"beforeend",
-		`
-	  <section
-		   style="
-				display: flex;
-				flex-direction: row;
-				flex-wrap: wrap;">
-		   <section
-				id="col1"
-				style="
-					 width: 50%;">
-		   </section>
-		   <section
-				id="col2"
-				style="
-					 width: 50%;">
-		   </section>
-	  </section>`
-	);
-
-	/* Getting the elements with the id "col1" and "col2" from the page. */
-	let col1 = document.getElementById("col1");
-	let col2 = document.getElementById("col2");
-
-	/* Creating a variable called text50k and setting it to a string. Then it is inserting the string into
-	  the element with the id "col1". */
-	let text50k = "<p>50k: " + Math.floor(oro / 50.0) + "</p>";
-	col1.insertAdjacentHTML("beforeend", text50k);
-	/* Creating a variable called text100k and setting it to a string. Then it is inserting the string into
-	  the element with the id "col1". */
-	let text100k = "<p>100k: " + Math.floor(oro / 100.0) + "</p>";
-	col1.insertAdjacentHTML("beforeend", text100k);
-	/* Creating a variable called text200k and setting it to a string. Then it is inserting the string into
-	  the element with the id "col1". */
-	let text200k = "<p>200k: " + Math.floor(oro / 200.0) + "</p>";
-	col1.insertAdjacentHTML("beforeend", text200k);
-	/* Creating a variable called text500k and setting it to a string. Then it is inserting the string into
-	  the element with the id "col2". */
-	let text500k = "<p>500k: " + Math.floor(oro / 500.0) + "</p>";
-	col2.insertAdjacentHTML("beforeend", text500k);
-	/* Creating a variable called text1kk and setting it to a string. Then it is inserting the string into
-	  the element with the id "col2". */
-	let text1kk = "<p>1kk: " + Math.floor(oro / 1000.0) + "</p>";
-	col2.insertAdjacentHTML("beforeend", text1kk);
-
-	/* Adding an event listener to the element with the id "CalcularRotativosTitle". When the user clicks
-	  on the element, the function will be executed. The function will check if the element with the id
-	  "CalcularRotativos" is visible or not. If it is visible, it will hide it. If it is hidden, it will
-	  show it. */
-	let calcularRotativosTitle = document.getElementById(
-		"CalcularRotativosTitle"
-	);
-	calcularRotativosTitle.addEventListener("click", () => {
-		if (calcularRotativos.style.display == "none") {
-			calcularRotativos.style.display = "block";
-		} else {
-			calcularRotativos.style.display = "none";
-		}
-	});
-
-	document.addEventListener("mouseup", () => {
-		if (cajaVenta.children.length > 0) {
-			add50k.disabled = false;
-			add100k.disabled = false;
-			add200k.disabled = false;
-            add250k.disabled = false;
-			add500k.disabled = false;
-			add1kk.disabled = false;
-		}
-	});
-
-	//Auto Compra/Venta
-	// hace doble click a un objeto de los paquetes, 3 children indica el contenedor del item
-	// document.getElementById("packages_wrapper").children[0].children[1].children[2].children[0].dispatchEvent(new MouseEvent("dblclick"))
-
-	//       function Find(textContent) {
-	//         let elements = document.getElementById("market_table").children[0].children[0].children;
-	//         let elementsArray = [].slice.call(elements);
-	//         for (let index = 0; index < elementsArray.length; index++) {
-	//           let element = elementsArray[index];
-	//           if (element.tagName === "TR" &&
-	//               element.children[0].tagName === "TD") {
-	//             console.log(element)
-	//           }
-	//         }
-	//       }
+    }
+    static Run(){
+        Mercado.Config();
+        Mercado.MostrarRotativosSeleccionados();
+        Mercado.EliminarRotativo();
+        Mercado.VentaRapida();
+    }
 }
 
-/**
- * It adds a button to the auction house that buys all the food you can afford
- */
 function AcutionHouseTools() {
     let item = document.getElementsByTagName("TD");
     let oro = parseInt(document.getElementById("sstat_gold_val").textContent.replace(/\./g, ''));
@@ -728,9 +503,6 @@ function AcutionHouseTools() {
     });
 }
 
-/**
- * Adds a button that merges all objects in your selected inventory
- */
 function SmelteryTimeSaverExtension() {
     let inv = document.getElementById("inv")
     window.addEventListener("load", () => {
@@ -1350,7 +1122,7 @@ class GuardarOro{
         GuardarOro.UI();
         let OroMaximoSuelto = document.getElementById("OroMaximoSuelto").value;
         localStorage.AutoGuardarOro = "NoGuardado";
-        console.log(localStorage.AutoGuardarOro, OroMaximoSuelto)
+        //console.log(localStorage.AutoGuardarOro, OroMaximoSuelto)
     }
 }
 
@@ -1359,9 +1131,3 @@ class GuardarOro{
 * run script
 */
 GladiatusTools.Run();
-
-
-
-
-
-
