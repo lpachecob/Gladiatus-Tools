@@ -4,13 +4,15 @@
 ## Funciones:
 #### Notificaciones
 Se han añadido unas notificaciones en la esquina superior derecha que brindan información de cuantos rotativos puede comprar con el oro que tiene actualmente.
+A partir de la versión 0.1.21 se permite la personalización de los rotativos a notificar
 
 #### Paquetes
-Se ha añadido un botón que coloca los objetos al costado del inventario, según una categoría a seleccionar (por defecto Mercado), esto a fin de no tener que buscarlos a lo largo de los demás paquetes, es recomendado utilizar la extencion Crazy Addon y colocar el agrupar paquetes en 10 o más ya que busca el objeto dentro de los que la página abierta tenga disponibles.
+Se ha añadido un botón que coloca los objetos al costado del inventario, según una categoría a seleccionar (por defecto Mercado), esto a fin de no tener que buscarlos a lo largo de los demás paquetes, es recomendado utilizar la extensión Crazy Addon y colocar el agrupar paquetes en 10 o más, ya que busca el objeto dentro de los que la página abierta tenga disponibles.
 > El valor de la categoría se almacena automáticamente.
 
 #### Mercado de Alianza
-Se han añadido botones de venta rápidos con los valores de 50, 100, 200, 250, 500, y 1kk; de manera que al precionar alguno de estos botones se venderá por el precio que esté marcado y seleccionará la duración que se elija.
+Se han añadido botones de venta rápida, de manera que al presionar alguno de estos botones se venderá por el precio que esté marcado y seleccionará la duración que se elija.
+A partir de la versión 0.1.21 se permite la personalización de los precios que aparecerá en el menú
 > El valor de la duración se almacena automáticamente.
 
 #### Subasta
