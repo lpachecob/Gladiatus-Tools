@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.2.1
+// @version       0.2.2
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
 // @match         *.gladiatus.gameforge.com/game/index.php*
 // @icon          https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/favicon.ico
 // @license       MIT
+
+// @resource      https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/styles.css
 // ==/UserScript==
 
 
@@ -124,10 +126,6 @@ class Formatter{
 class Menu{
     static Dibujar(){
         document.body.insertAdjacentHTML("afterbegin",`
-            <style>
-                .menutools { display: none; width: 422px; height: -webkit-fill-available; position: fixed; z-index: 10000; top: 0; right: 0; background-color: #111; overflow-x: hidden; padding-top: 16px; padding-left: 12px; } .menutools a { padding: 8px 8px 8px 32px; text-decoration: none; font-size: 25px; color: #818181; display: block; } .menutools a:hover { color: #f1f1f1; } .menutools .closebtn { position: absolute; top: 0; right: 25px; font-size: 36px; margin-left: 50px; } .menutools > h1{ color: #ffffff; } .menutools > h2{ color: #ffffff; } .menutools > h3{ color: #ffffff; } .menutools > label{ color: #ffffff; } .menutools > div{ color: #ffffff; } .btnMenu{ font-size:20px; cursor:pointer; position: fixed; top: 134px; right: 4%; background: transparent; border: transparent; z-index: 10000; } @media screen and (max-height: 450px) { .menutools { padding-top: 15px; } .menutools a { font-size: 18px; } }
-            </style>
-
             <button id="MenuOpen" title="𝗖𝗢𝗡𝗙𝗜𝗚𝗨𝗥𝗔𝗖𝗜𝗢𝗡\nGLADIATUS TOOLS" class="btnMenu"> <img style="height: 112px;" src="https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/favicon.ico"></button>
             <div id="menuSidenav" class="menutools">
                  <h1>Configuración</h1>
@@ -228,10 +226,7 @@ class Notificaciones{
             document.getElementById("mmonetbar").insertAdjacentHTML("beforeend",`
                 <a href="game/index.php?mod=guildMarket" style="display: contents;">
                     <div id="testnoti" class="notification-box notification-info" style="position: fixed;right: 0px;"><div class="icon"></div>` + mensaje + `</div>
-                </a>
-                <style>
-                    /* Notifications */ .notification-box{cursor: pointer;background-position: 15px center;background-repeat: no-repeat;box-shadow: 0 0 12px #000;color: #FFFFFF;margin: 0 0 6px;opacity: 0.9;padding: 5px 5px 5px 28px;width: 200px;white-space: pre-wrap; z-index: 10000;}.notification-info{background-color: #2F96B4;border: 1px solid #267890;}
-                <style>`);
+                </a>`);
         }
 
     }
@@ -735,32 +730,6 @@ class Paquetes {
                  <option>Recompensa de la misión</option>
             </datalist>
             <div id="MercadoFavoritos" class="Favoritos"><h2 id="mensaje"></h2></div>
-            <style>
-                .panelBusqueda{
-                    position: absolute;height: 41px;width: 408px;background: #ded2ad;left: 405px;top: -33px;
-                }
-                .Favoritos {
-                    position: absolute; width: 388px; height: 395px; left: 405px; top: 8px; background: rgb(222, 210, 173); padding: 10px; display: block;overflow: scroll;overflow-x: hidden; display:none;
-                }
-                .Favoritos::-webkit-scrollbar {
-                    width: 10px;
-                }
-
-                /* Track */
-                .Favoritos::-webkit-scrollbar-track {
-                    background: #f1f1f1;
-                }
-
-                /* Handle */
-                .Favoritos::-webkit-scrollbar-thumb {
-                    background: #888;
-                }
-
-                /* Handle on hover */
-                .Favoritos::-webkit-scrollbar-thumb:hover {
-                   background: #555;
-                }
-            </style>
         </div>`)
         let buscarRotativos = document.getElementById("buscarRotativos");
         let categoria = document.getElementById("categoria");
@@ -906,39 +875,6 @@ class ExtenderBotones{
             <div id="menuBotonPaquetes" class="menuBotonPaquetes">
                 <div class="icon-out"><a class="icon food-icon" href="index.php?mod=packages&f=7&fq=-1&qry=&page=1&`+sh+`" title="Ir a paquetes, Utilizable"></a></div>
             </div>
-            <style>
-                 .menuBotonPaquetes {
-                    display: none;
-                    position: absolute;
-                    opacity: 1;
-                    background: rgb(222, 210, 173);
-                    top: 42px;
-                    right: 4px;
-                    padding: 10px;
-                 }
-                 #menuBotonPaquetes .icon-out {
-                    float: left;
-                 }
-                 #menuBotonPaquetes .icon {
-                    width: 25px;
-                    height: 25px;
-                    display: block;
-                    cursor: pointer;
-                 }
-                 .food-icon {
-                    background: transparent url(https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/buttons.png) -395px 0px no-repeat;
-                 }
-                 .extederPaquetes {
-                    position: absolute;
-                    right: -10px;
-                    top: -3px;
-                    height: 19px;
-                    width: 21px;
-                    color: white;
-                    background: #8e2a2a;
-                    border: none;
-                }
-            </style>
             `);
         let menuBotonPaquetes = document.getElementById("menuBotonPaquetes");
         let extenderPaquetes = document.getElementById("extenderPaquetes");
