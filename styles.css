@@ -1,0 +1,145 @@
+/* The CSS for the menu. */
+.menutools {
+  display: none;
+  width: 422px;
+  height: -webkit-fill-available;
+  position: fixed;
+  z-index: 10000;
+  top: 0;
+  right: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 16px;
+  padding-left: 12px;
+}
+.menutools a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+}
+.menutools a:hover {
+  color: #f1f1f1;
+}
+.menutools .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+.menutools > h1 {
+  color: #ffffff;
+}
+.menutools > h2 {
+  color: #ffffff;
+}
+.menutools > h3 {
+  color: #ffffff;
+}
+.menutools > label {
+  color: #ffffff;
+}
+.menutools > div {
+  color: #ffffff;
+}
+.btnMenu {
+  font-size: 20px;
+  cursor: pointer;
+  position: fixed;
+  top: 134px;
+  right: 4%;
+  background: transparent;
+  border: transparent;
+  z-index: 10000;
+}
+@media screen and (max-height: 450px) {
+  .menutools {
+    padding-top: 15px;
+  }
+  .menutools a {
+    font-size: 18px;
+  }
+}
+
+/* It's a CSS class for the notifications. */
+.notification-box {
+  cursor: pointer;
+  background-position: 15px center;
+  background-repeat: no-repeat;
+  box-shadow: 0 0 12px #000;
+  color: #ffffff;
+  margin: 0 0 6px;
+  opacity: 0.9;
+  padding: 5px 5px 5px 28px;
+  width: 200px;
+  white-space: pre-wrap;
+  z-index: 10000;
+}
+.notification-info {
+  background-color: #2f96b4;
+  border: 1px solid #267890;
+}
+
+
+
+/* menu de busqueda en paquetes. */
+.panelBusqueda{
+    position: absolute;height: 41px;width: 408px;background: #ded2ad;left: 405px;top: -33px;
+}
+.Favoritos {
+    position: absolute; width: 388px; height: 395px; left: 405px; top: 8px; background: rgb(222, 210, 173); padding: 10px; display: block;overflow: scroll;overflow-x: hidden; display:none;
+}
+.Favoritos::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+.Favoritos::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+.Favoritos::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+.Favoritos::-webkit-scrollbar-thumb:hover {
+   background: #555;
+}
+
+
+/*css del submenu del boton de paquetes*/
+.menuBotonPaquetes {
+    display: none;
+    position: absolute;
+    opacity: 1;
+    background: rgb(222, 210, 173);
+    top: 42px;
+    right: 4px;
+    padding: 10px;
+ }
+ #menuBotonPaquetes .icon-out {
+    float: left;
+ }
+ #menuBotonPaquetes .icon {
+    width: 25px;
+    height: 25px;
+    display: block;
+    cursor: pointer;
+ }
+ .food-icon {
+    background: transparent url(https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/buttons.png) -395px 0px no-repeat;
+ }
+ .extederPaquetes {
+    position: absolute;
+    right: -10px;
+    top: -3px;
+    height: 19px;
+    width: 21px;
+    color: white;
+    background: #8e2a2a;
+    border: none;
+}
