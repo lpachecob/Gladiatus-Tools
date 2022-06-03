@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.2.0
+// @version       0.2.1
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -723,12 +723,15 @@ class Paquetes {
             <button id="buscarRotativos" class="awesome-button" style="position: absolute;right: -255px;top: -25px;color: white;font-weight: bold;font-size: 13px;">🔎 Buscar Items</button>
             <input type="search" id="categoria" list="listaCategorias" style="position: absolute; right: -476px; top: -23px;" value="Mercado">
             <datalist id="listaCategorias">
+                 <option>Banco de trabajo</option>
                  <option>Casa de subastas</option>
+                 <option>Ermitaño</option>
                  <option>Expedición</option>
                  <option>Fundición</option>
                  <option>Jefe de la Mazmorra</option>
                  <option>Mazmorra</option>
                  <option>Mercado</option>
+                 <option>Panteón</option>
                  <option>Recompensa de la misión</option>
             </datalist>
             <div id="MercadoFavoritos" class="Favoritos"><h2 id="mensaje"></h2></div>
