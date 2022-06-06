@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.3.0
+// @version       0.3.1
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -138,15 +138,11 @@ class Menu{
             `);
         let menuOpen = document.getElementById("MenuOpen");
         menuOpen.addEventListener("click", Menu.openNav);
+        menuOpen.addEventListener("touchstart",Menu.openNav);
         let closeMenu = document.getElementById("CloseMenu");
         closeMenu.addEventListener("click", Menu.closeNav);
 
-        document.addEventListener('mouseup', function(e) {
-            var container = document.getElementById("menuSidenav");
-            if (!container.contains(e.target)) {
-                container.style.display = 'none';
-            }
-        });
+
     }
     static openNav() {
         document.getElementById("menuSidenav").style.display = "block";
@@ -259,6 +255,11 @@ class Notificaciones{
                 localStorage.MontosGuardados = JSON.stringify(MontosGuardados.sort(function(a, b){return a - b}));
                 window.location.reload()
             })
+            boton.addEventListener("touchstart",()=>{
+                MontosGuardados.splice(boton.attributes[1].value,1)
+                localStorage.MontosGuardados = JSON.stringify(MontosGuardados.sort(function(a, b){return a - b}));
+                window.location.reload()
+            })
 
         }
     }
@@ -317,6 +318,11 @@ class Mercado{
                 localStorage.MontosMercado = JSON.stringify(MontosMercado.sort(function(a, b){return a - b}));
                 window.location.reload()
             })
+            boton.addEventListener("touchstart",()=>{
+                MontosMercado.splice(boton.attributes[1].value,1)
+                localStorage.MontosMercado = JSON.stringify(MontosMercado.sort(function(a, b){return a - b}));
+                window.location.reload()
+            })
 
         }
     }
@@ -337,7 +343,7 @@ class Mercado{
         insertOnPage.beforebegin(panelVenta,`
 	        <section id="CompraRapidaMenu" style="display: block; margin: 12px;">
                 <label title="Solo se comprarán los objetos cuyo valor sea igual a los que tienen los rotativos" style="cursor: pointer;">
-                    <button id="CompraTodo" class="awesome-button">Comprar</button><span style="position: absolute;top: 304px;left: 440px;color: blue;font-size: 14px;border: 2px solid blue;-webkit-border-radius: 29px;padding: 0 7px;">ℹ</span>
+                    <button id="CompraTodo" class="awesome-button">Comprar</button>
                 </label>
                 <select id="TipoCompra" style="margin: 8px; font-size: 14px;">
                     <option>Mayor a menor ⬇</option>
@@ -380,11 +386,23 @@ class Mercado{
                 ventaRapidaMenu.style.display = "none";
             }
         });
+        ventaRapidaMenuTitle.addEventListener("touchstart",()=>{
+            if (ventaRapidaMenu.style.display == "none") {
+                ventaRapidaMenu.style.display = "block";
+            } else {
+                ventaRapidaMenu.style.display = "none";
+            }
+        });
 
         let BotononesVender = document.getElementsByName("BotonVender")
 
         for (let boton of BotononesVender) {
             boton.addEventListener("click",()=>{
+                inputPrecio.value = boton.attributes[1].value;
+                inputDuracion.value = localStorage.SelectHora;
+                botonVender.click();
+            })
+            boton.addEventListener("touchstart",()=>{
                 inputPrecio.value = boton.attributes[1].value;
                 inputDuracion.value = localStorage.SelectHora;
                 botonVender.click();
@@ -581,7 +599,36 @@ function AcutionHouseTools() {
             }
         }
     });
+    botonComprar.addEventListener("touchstart",()=>{
+        if (oroMaximo.value.length > 0) {
+            //Proximamente
+        } else if (oroMaximo.value.length == 0) {
+            for (let isItem = 0; isItem < item.length; isItem++) {
+                if(item[isItem].hasAttribute("width")==true){
+                    let auction_bid_div = item[isItem].children[1].children[0].children[7].children;
+                    let auction_item_div = item[isItem].children[1].children[0].children[6].children[1].children[0];
+                    let itemSplit = auction_item_div.attributes[6].textContent.substring(4,9);
+                    //console.log(auction_bid_div[2]);
+                    let costo = parseInt(auction_bid_div[2].value);
+                    if (costo < oro) {
+                        oro = oro - costo;
+                        //console.log(oro," - ",costo)
+                        let PujaDeAlguien;
+                        if (
+                            auction_bid_div[0].innerText.split("\n")[0] == "No hay pujas." ||
+                            auction_bid_div[0].innerText.split("\n")[0] == "Ya hay pujas existentes."
+                        ) {
+                            //items[i].children[3].click();
+                            if(itemSplit != "Pollo"){
+                                auction_bid_div[3].click();
+                            }
 
+                        }
+                    }
+                }
+            }
+        }
+    });
     let menuCompraTitle = document.getElementById("MenuCompraTitle");
     menuCompraTitle.addEventListener("click", () => {
         if (SectionMenuCompra.style.display == "none") {
@@ -800,8 +847,8 @@ class Paquetes {
         insertOnPage.afterbegin(inventoryBox,`
         <div>
             <div class="panelBusqueda"></div>
-            <button id="buscarRotativos" class="awesome-button" style="position: absolute;right: -255px;top: -25px;color: white;font-weight: bold;font-size: 13px;">🔎 Buscar Items</button>
-            <input type="search" id="categoria" list="listaCategorias" style="position: absolute; right: -476px; top: -23px;" value="Mercado">
+            <button id="buscarRotativos" class="awesome-button buscarRotativos">🔎 Buscar Items</button>
+            <input class="SelectCategorias" type="search" id="categoria" list="listaCategorias" value="Mercado">
             <datalist id="listaCategorias">
                  <option>Banco de trabajo</option>
                  <option>Casa de subastas</option>
@@ -814,14 +861,21 @@ class Paquetes {
                  <option>Panteón</option>
                  <option>Recompensa de la misión</option>
             </datalist>
-            <div id="MercadoFavoritos" class="Favoritos"><h2 id="mensaje"></h2></div>
+            <div id="MercadoFavoritos" class="Favoritos" style="display: none"><h2 id="mensaje"></h2></div>
             <style>
-                .panelBusqueda{
-                    position: absolute;height: 41px;width: 408px;background: #ded2ad;left: 405px;top: -33px;
+                @media only screen and (max-width: 1760px) {
+                    .panelBusqueda{position: inherit; height: 41px; width: 299px; background: #ded2ad; left: 305px; top: -33px; }
+                    .buscarRotativos{position: relative; right: -22px; top: -26px; color: white; font-weight: bold; font-size: 13px;}
+                    .SelectCategorias{ position: relative; right: -30px; top: -23px; width: 132px; font-size: 18px;}
+                    .Favoritos {position: relative; width: 278px; height: 97px; top: -14px; background: rgb(222, 210, 173); padding: 11px; overflow: scroll; overflow-x: hidden;}
                 }
-                .Favoritos {
-                    position: absolute; width: 388px; height: 395px; left: 405px; top: 8px; background: rgb(222, 210, 173); padding: 10px; display: block;overflow: scroll;overflow-x: hidden; display:none;
+                @media only screen and (min-width: 1760px) {
+                    .panelBusqueda{position: absolute;height: 41px;width: 408px;background: #ded2ad;left: 405px;top: -33px;}
+                    .buscarRotativos{position: absolute;right: -255px;top: -25px;color: white;font-weight: bold;font-size: 13px;}
+                    .SelectCategorias{position: absolute; right: -476px; top: -23px;}
+                    .Favoritos {position: absolute; width: 388px; height: 395px; left: 405px; top: 8px; background: rgb(222, 210, 173); padding: 10px; display: block;overflow: scroll;overflow-x: hidden; display:none;}
                 }
+                
                 .Favoritos::-webkit-scrollbar {
                     width: 10px;
                 }
@@ -846,6 +900,9 @@ class Paquetes {
         let categoria = document.getElementById("categoria");
 
         buscarRotativos.addEventListener("click",()=>{
+            Paquetes.PonerEnFavoritos(categoria.value)
+        })
+        buscarRotativos.addEventListener("touchstart",()=>{
             Paquetes.PonerEnFavoritos(categoria.value)
         })
         if(localStorage.paquetesCategoria == undefined){
@@ -1031,6 +1088,7 @@ class ExtenderBotones{
                 menuBotonPaquetes.style.display = 'none';
             }
         })
+
          document.addEventListener('mouseup', function(e) {
             var container = document.getElementById("extenderPaquetes");
             if (!container.contains(e.target)) {
