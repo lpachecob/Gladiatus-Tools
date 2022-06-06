@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.2.3
+// @version       0.3.0
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -328,12 +328,23 @@ class Mercado{
         let marketInventory = document.getElementById("market_inventory");
         let oro = parseFloat(document.getElementById("sstat_gold_val").textContent);
         let cajaVenta = document.getElementsByClassName("ui-droppable")[0];
+        let contentItem = document.getElementsByClassName("contentItem")[0];
 
-        insertOnPage.beforebegin(panelVenta,`
+        insertOnPage.afterbegin(contentItem,`
             <h2 id="VentaRapidaMenuTitle" class="section-header" style="cursor: pointer;">Venta Rapida</h2>
 	        <section id="VentaRapidaMenu" style="display: block;"> <p>Coloca un item y elige el precio para vender.</p> </section>
         `);
-
+        insertOnPage.beforebegin(panelVenta,`
+	        <section id="CompraRapidaMenu" style="display: block; margin: 12px;">
+                <label title="Solo se comprarán los objetos cuyo valor sea igual a los que tienen los rotativos" style="cursor: pointer;">
+                    <button id="CompraTodo" class="awesome-button">Comprar</button><span style="position: absolute;top: 304px;left: 440px;color: blue;font-size: 14px;border: 2px solid blue;-webkit-border-radius: 29px;padding: 0 7px;">ℹ</span>
+                </label>
+                <select id="TipoCompra" style="margin: 8px; font-size: 14px;">
+                    <option>Mayor a menor ⬇</option>
+                    <option>Menor a mayor ⬆</option>
+                </select>
+            </section>
+        `);
         let MontosMercado = JSON.parse(localStorage.MontosMercado);
         let ventaRapidaMenu = document.getElementById("VentaRapidaMenu");
 
@@ -343,8 +354,8 @@ class Mercado{
             `)
         };
         insertOnPage.beforeend(ventaRapidaMenu,`
-            <section id="" style="display: block;">
-                <p><small>Elegir duración</small></p>
+            <section id="" style="display: block; margin: 11px">
+                <small>Elegir duración</small>
                 <select id="SelectHora" size="1">
 				    <option value="1">2 h</option>
 				    <option value="2">8 h</option>
@@ -382,11 +393,89 @@ class Mercado{
         }
 
     }
+    static Comprar(){
+        let CompraTodo = document.getElementById("CompraTodo");
+        let TipoCompra = document.getElementById("TipoCompra");
+        let MontosMercado = JSON.parse(localStorage.MontosMercado);
+
+        if (localStorage.TipoCompra == undefined) {
+				localStorage.TipoCompra = 0;
+			} else {
+				TipoCompra.selectedIndex = localStorage.TipoCompra;
+			}
+			TipoCompra.addEventListener("change", (event) => {
+				localStorage.TipoCompra = TipoCompra.selectedIndex;
+			});
+
+        let marketTableChildren = document.getElementById("market_table").children[0].children[0].children
+        let marketItems = [];
+        for (let item of marketTableChildren) {
+            if(item.tagName == "TR" && item.children[0].tagName == "TD" && item.children[1].children[0].children[0].style.color == "green"){
+                if(MontosMercado.includes(item.children[2].innerText.replace(/\./g, ''))){
+                    marketItems.push(item)
+                }
+            }
+        }
+        CompraTodo.addEventListener("click",()=>{
+            switch(TipoCompra.selectedIndex){
+                case 0 :
+                    Mercado.Mayor_Menor(marketItems);
+                    break;
+                case 1:
+                    Mercado.Menor_Mayor(marketItems);
+                    break
+                default:
+                    console.error("No se pudo procesar la compra");
+                    break;
+            }
+        })
+    }
+    static Mayor_Menor(marketItems){
+        let aux = marketItems[0].children[2].innerText.replace(/\./g, '')
+        let oro = parseInt(document.getElementById("sstat_gold_val").textContent.replace(/\./g, ''));
+        let orden = []
+        for (let item of marketItems) {
+            if(item.children[2].innerText.replace(/\./g, '') >= aux){
+                orden.unshift(item)
+            }
+            aux = item.children[2].innerText.replace(/\./g, '');
+        }
+        for (let item of orden){
+            let valor = parseInt(item.children[2].innerText.replace(/\./g, ''))
+            //;
+            //console.log(item.children[2].innerText.replace(/\./g, ''))
+            if(valor < oro){
+                item.children[5].children[0].click();
+                oro = oro - valor;
+            }
+        }
+    }
+    static Menor_Mayor(marketItems){
+        let aux = marketItems[0].children[2].innerText.replace(/\./g, '')
+        let oro = parseInt(document.getElementById("sstat_gold_val").textContent.replace(/\./g, ''));
+        let orden = []
+        for (let item of marketItems) {
+            if(item.children[2].innerText.replace(/\./g, '') >= aux){
+                orden.push(item)
+            }
+            aux = item.children[2].innerText.replace(/\./g, '');
+        }
+        for (let item of orden){
+            let valor = parseInt(item.children[2].innerText.replace(/\./g, ''))
+            //;
+            //console.log(item.children[2].innerText.replace(/\./g, ''))
+            if(valor < oro){
+                item.children[5].children[0].click();
+                oro = oro - valor;
+            }
+        }
+    }
     static Run(){
         Mercado.Config();
         Mercado.MostrarRotativosSeleccionados();
         Mercado.EliminarRotativo();
         Mercado.VentaRapida();
+        Mercado.Comprar();
     }
 }
 
@@ -548,15 +637,6 @@ function SmelteryTimeSaverExtension() {
 			);
 
 			let selectInventario = document.getElementById("SelectInventario");
-			if (localStorage.InventarioFundicion == undefined) {
-				localStorage.InventarioFundicion = "Ⅰ";
-				selectInventario.value = "Ⅰ";
-			} else {
-				selectInventario.value = localStorage.InventarioFundicion;
-			}
-			selectInventario.addEventListener("change", (event) => {
-				localStorage.InventarioFundicion = selectInventario.value;
-			});
 
 			let inventoryTabs = document.getElementsByClassName("awesome-tabs");
 			let inventorySelected;
