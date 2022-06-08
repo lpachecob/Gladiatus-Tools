@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.3.1
+// @version       0.4.0
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -18,13 +18,15 @@ const oro = parseInt(document.getElementById("sstat_gold_val").innerText.replace
 var dobleClickEvent = document.createEvent('MouseEvents');
 dobleClickEvent.initEvent('dblclick', true, true);
 
-let sh;
-for (let element of getURL) {
-    if(element.includes("sh") == true){
-        sh = element
+let sh = {
+    get : ()=>{
+        for (let element of getURL) {
+            if(element.includes("sh") == true){
+                return element;
+            }
+        }
     }
 }
-
 class GladiatusTools{
     static SetTool(){
         const mainMenu = document.getElementById("mainmenu");
@@ -47,7 +49,7 @@ class GladiatusTools{
         Menu.Dibujar();
         GladiatusTools.SetTool();
         Notificaciones.Rotativos();
-        //GuardarOro.Run();
+        GuardarOro.Run();
         ExtenderBotones.Paquetes();
         window.addEventListener("load", () => {
             localStorage.TimeSaverExist = TimeSaver.Exist();
@@ -1041,7 +1043,7 @@ class ExtenderBotones{
         insertOnPage.afterend(menue_packages,`
             <button id="extenderPaquetes" class="awesome-button extederPaquetes" title="Presiona para abrir el menú de paquetes">+</button>
             <div id="menuBotonPaquetes" class="menuBotonPaquetes">
-                <div class="icon-out"><a class="icon food-icon" href="index.php?mod=packages&f=7&fq=-1&qry=&page=1&`+sh+`" title="Ir a paquetes, Utilizable"></a></div>
+                <div class="icon-out"><a class="icon food-icon" href="index.php?mod=packages&f=7&fq=-1&qry=&page=1&`+sh.get()+`" title="Ir a paquetes, Utilizable"></a></div>
             </div>
             <style>
                  .menuBotonPaquetes {
@@ -1105,10 +1107,12 @@ class GuardarOro{
         Menu.addConfig(`
             <h3>Guardar Oro</h3>
             <ul><label><input id="GuardarOroCheck" type="checkbox"> Guardar tu oro automaticamente<label></ul>
-            <ul>Oro Máximo a tener suelto: <input id="OroMaximoSuelto" style="width: 100px;background: white;" value="0"></ul>
+            <ul><select id="TipoDeGuardado"><option disabled>Mercado</option><option disabled>Casa de subastas</option><option>Entrenamiento</option></select></ul>
+
         `);
         let GuardarOroCheck = document.getElementById("GuardarOroCheck");
-        let OroMaximoSuelto = document.getElementById("OroMaximoSuelto");
+        ;
+        let TipoDeGuardado = document.getElementById("TipoDeGuardado")
 
         if (localStorage.GuardarOroCheck == undefined) {
             localStorage.GuardarOroCheck = GuardarOroCheck.checked
@@ -1119,151 +1123,129 @@ class GuardarOro{
             localStorage.GuardarOroCheck = GuardarOroCheck.checked;
         })
 
-        if (localStorage.OroMaximoSuelto == undefined) {
-            localStorage.OroMaximoSuelto = OroMaximoSuelto.value
+        if (localStorage.TipoDeGuardado == undefined) {
+            localStorage.TipoDeGuardado = TipoDeGuardado.selectedIndex
         } else {
-            OroMaximoSuelto.value = localStorage.OroMaximoSuelto;
+            TipoDeGuardado.selectedIndex = localStorage.TipoDeGuardado;
         }
-        OroMaximoSuelto.addEventListener("input", () => {
-            localStorage.OroMaximoSuelto = OroMaximoSuelto.value;
+        TipoDeGuardado.addEventListener("change", () => {
+            localStorage.TipoDeGuardado = TipoDeGuardado.selectedIndex;
+            location.reload();
         })
+
+        if(TipoDeGuardado.selectedIndex == 0 || TipoDeGuardado.selectedIndex == 1){
+            insertOnPage.afterend(TipoDeGuardado,`<ul>Oro Máximo a tener suelto: <input id="OroMaximoSuelto" style="width: 100px;background: white;" value="0"></ul`);
+            let OroMaximoSuelto = document.getElementById("OroMaximoSuelto")
+            if (localStorage.OroMaximoSuelto == undefined) {
+                localStorage.OroMaximoSuelto = OroMaximoSuelto.value
+            } else {
+                OroMaximoSuelto.value = localStorage.OroMaximoSuelto;
+            }
+            OroMaximoSuelto.addEventListener("input", () => {
+                localStorage.OroMaximoSuelto = OroMaximoSuelto.value;
+            })
+        }
+
+        if(TipoDeGuardado.selectedIndex == 2){
+            insertOnPage.afterend(TipoDeGuardado,`
+            <select id="SeleccionarEntrenamiento"><option>Fuerza</option><option>Destreza</option><option>Agilidad</option><option>Constitución</option><option>Carisma</option><option>Inteligencia</option></select>
+            `)
+
+            let SeleccionarEntrenamiento = document.getElementById("SeleccionarEntrenamiento");
+            if (localStorage.SeleccionarEntrenamiento == undefined) {
+                localStorage.SeleccionarEntrenamiento = SeleccionarEntrenamiento.selectedIndex
+            } else {
+                SeleccionarEntrenamiento.selectedIndex = localStorage.SeleccionarEntrenamiento;
+            }
+            SeleccionarEntrenamiento.addEventListener("change", () => {
+                localStorage.SeleccionarEntrenamiento = SeleccionarEntrenamiento.selectedIndex;
+            })
+        }
     }
     static VerSiTengoOro(oroTrigger){
-        let oroTriggerParse = parseInt(oroTrigger.replace(/\./g, ''))
+        let oroTriggerParse = parseInt(oroTrigger)
         if(oro > oroTriggerParse){
             return true;
         }else{
             return false;
         }
     }
-    static ItemsParaComprar(){
-        if(getURL[0] == "?mod=guildMarket" &&	getURL[1] != "submod=control"){
-            let market_table = document.getElementById("market_table")
-            let market_table_trs = market_table.children[0].children[0].children
-            let itemsEnVenta = [];
 
-            for (let item of market_table_trs) {
-                if(item.tagName == "TR" &&
-                   !!item.children[5].children[0] == true &&
-                   item.children[5].children[0].name == "buy"){
-                    itemsEnVenta.push(item)
+    static Guardar(){
+        let EntrenamientoLink = "https://s45-es.gladiatus.gameforge.com/game/index.php?mod=training&"+sh.get();
+        let GuardarOroCheck = document.getElementById("GuardarOroCheck")
+        if(GuardarOroCheck.checked){
+            let tipoDeGuardado = {
+                get : ()=>{
+                    let TipoDeGuardado = document.getElementById("TipoDeGuardado");
+                    return TipoDeGuardado.selectedIndex
+                },
+                __ifNeedTriggerGold : ()=>{
+
+                },
+                __ifNeedChoiseAnStat : ()=>{
+                    let SeleccionarEntrenamiento = document.getElementById("SeleccionarEntrenamiento");
+                    return SeleccionarEntrenamiento.selectedIndex;
                 }
             }
-            return itemsEnVenta;
-        } else {
-            return [];
-        }
-    }
-
-    static sComprarTodo(){
-        let OroMaximoSuelto = document.getElementById("OroMaximoSuelto").value;
-        let inv = document.getElementById("inv");
-
-        if((!localStorage.CompraItem=="" && !localStorage.CompraVinculado=="" && !localStorage.CompraPrecioCompra=="" && localStorage.itemEnInventario == "No") == true){
-            console.log("Item Comprado ir a recogerlo")
-            if(getURL[0] != "?mod=packages"){
-                document.getElementById("menue_packages").click()
-            }
-            if(getURL[0] == "?mod=packages"){
-                
-            }
-        }else{
-            if(localStorage.itemEnInventario == "Si"){
-                if(getURL[0] != "?mod=guildMarket"){
-                    window.location.replace("index.php?mod=guildMarket&s=pd&"+sh)
-                }
-            }
-
-        }
-    }
-    static VenderItem(){
-        window.addEventListener("load", ()=>{
-            let items = document.getElementById("inv").children;
-            for (let item of items) {
-                for(let attribute of item.attributes){
-                    if(attribute.name == "data-tooltip"){
-                        if(attribute.textContent.slice(0,19).split(",")[0] == localStorage.CompraItem.slice(0,19)){
-                            item.dispatchEvent(dobleClickEvent);
-                            setTimeout(function () {
-                                document.getElementById("preis").value = localStorage.CompraPrecioCompra;
-                                document.getElementById("dauer").selectedIndex = 2;
-                                // document.getElementsByName("anbieten")[0].click();
-                                localStorage.itemEnInventario = "No"
-                                localStorage.CompraItem = "";
-                                localStorage.CompraVinculado = "";
-                                localStorage.CompraPrecioCompra = "";
-                            }, 2000);
+            let data = {
+                init : ()=>{
+                    if (getURL[0] == "?mod=training") {
+                        let TrainingBox = document.getElementById("training_box");
+                        let Stats = {
+                            get : ()=>{
+                                let stats = []
+                                for (let index = 1; index < 7; index++){
+                                    stats.push(TrainingBox.children[index])
+                                }
+                                return stats;
+                            },
+                            push : ()=>{
+                                let statPrices = []
+                                for (let statPrice of Stats.get()) {
+                                    statPrices.push(parseInt(statPrice.children[1].children[0].children[0].innerText.replace(/\./g, '')))
+                                }
+                                localStorage.PlayerStatsPrices = JSON.stringify(statPrices);
+                            }
                         }
+                        Stats.push();
                     }
                 }
             }
-
-        })
-    }
-    static CogerDeInventario(){
-         let inv = document.getElementById("inv");
-        document.getElementById("buscarRotativos").click()
-        let items = document.getElementById("MercadoFavoritos").children;
-        for (let index = 1; index < items.length; index++) {
-            let item = items[index].children[2].children[0];
-            for (let attribute of item.attributes) {
-                if(attribute.name == "data-tooltip"){
-                    localStorage.CompraItem_Comprobar = attribute.textContent.slice(0,22).split(",")[0]
+            if(localStorage.PlayerStatsPrices == undefined){
+                window.location.href = "https://s45-es.gladiatus.gameforge.com/game/index.php?mod=training&"+sh.get();
+            }
+            data.init()
+            let training_box = document.getElementById("training_box");
+            let trainButtons = {
+                get : ()=>{
+                    let buttons = []
+                    for (let index = 1; index < 7; index++) {
+                        buttons.push(training_box.children[index].children[1].children[1])
+                    }
+                    return buttons;
                 }
             }
-            if(localStorage.CompraItem_Comprobar.slice(0,19) == localStorage.CompraItem.slice(0,19)){
-                Observer.ForRemovedNodes(inv, ()=>{
-                    item.dispatchEvent(dobleClickEvent);
-                    localStorage.itemEnInventario = "Si";
-                });
 
+            /////////////
+            //ir a guardar
+            let playerStatsPrices = JSON.parse(localStorage.PlayerStatsPrices)
+            if(playerStatsPrices[tipoDeGuardado.__ifNeedChoiseAnStat()] < oro){
+                window.location.href = EntrenamientoLink;
+                trainButtons.get()[tipoDeGuardado.__ifNeedChoiseAnStat()].click();
             }
         }
+
+
     }
-    static ComprarTodo(){
-        let OroMaximoSuelto = document.getElementById("OroMaximoSuelto").value;
-        if(GuardarOro.VerSiTengoOro(OroMaximoSuelto) == true){
-            let itemsComprados = [];
-            for(let item of GuardarOro.ItemsParaComprar()){
-                let itemPrice = parseInt(item.children[2].textContent.replace(/\./g, ''));
-                if(itemPrice<oro){
-                    oro = oro - itemPrice;
-                    for(let attribute of item.children[0].children[0].attributes){
-                        if(attribute.name == "data-tooltip"){
-                            let objeto = attribute.textContent.slice(0,200).split(",");
-                            let contador = 0;
-                            for (let elemento of objeto) {
-                                if(elemento.includes('#')==false){
-                                    if(contador==0){
-                                        localStorage.CompraItem = elemento;
-                                    }
-                                    if(contador==1){
-                                        localStorage.CompraVinculado = elemento;
-                                    }
-                                    contador++;
-                                }
-                                if(contador>2){
-                                    break;
-                                }
-                            }
-                            localStorage.CompraPrecioCompra = itemPrice;
-                            //itemsComprados.push(atributosGuardar)
-                        }
-                        }
-                    item.children[5].children[0].click();
-                }
-            }
-            //Guardar Objetos en local storage
-            //localStorage.test3 = JSON.stringify({"test":"testContend"})
-            //let test = JSON.parse(localStorage.test3)
-        }
-    }
+
+
+
 
     static Run(){
         GuardarOro.UI();
-        let OroMaximoSuelto = document.getElementById("OroMaximoSuelto").value;
-        localStorage.AutoGuardarOro = "NoGuardado";
-        //console.log(localStorage.AutoGuardarOro, OroMaximoSuelto)
+        GuardarOro.Guardar();
+
     }
 }
 
