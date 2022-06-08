@@ -22,3 +22,9 @@ Se ha añadido un botón que comprará todos los alimentos que estén en la pág
 #### Fundición
 Se ha añadido una funcionalidad que trabaja de la mano con la extensión Time Saver, lo que hace es fundir todos los objetos que estén en el inventario seleccionado, además también está la función de guardar los recursos y después fundir.
 > Para que funcione este apartado es requerido la extencion Time Saver
+
+#### Guardar Oro
+Se ha añadido una funcion que permite guardar el oro.
+
+- Version 0.4.0 en adelante:
+ - Guardar oro en entrenamiento.
