@@ -26,5 +26,4 @@ Se ha añadido una funcionalidad que trabaja de la mano con la extensión Time S
 #### Guardar Oro
 Se ha añadido una funcion que permite guardar el oro.
 
-- Version 0.4.0 en adelante:
- - Guardar oro en entrenamiento.
+- Version 0.4.0 en adelante: Guardar oro en entrenamiento.
