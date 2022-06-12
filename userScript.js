@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.5.0
+// @version       0.5.1
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -44,6 +44,7 @@ class GladiatusTools{
             Paquetes.UI();
             Paquetes.MoverFiltros();
             Paquetes.ExtendsInput();
+            Paquetes.AbrirdesdeMercado();
         }
     }
     static Run(){
@@ -56,6 +57,7 @@ class GladiatusTools{
             localStorage.TimeSaverExist = TimeSaver.Exist();
             TimeSaver.setKeyForStop(JSON.parse(localStorage.TimeSaverExist));
             TimeSaver.StopOnKey();
+            TimeSaver.StopOnClick();
         });
     }
 }
@@ -199,6 +201,7 @@ class Notificaciones{
         }
         NotificarOro.addEventListener("change", () => {
             localStorage.NotificarOro = NotificarOro.checked;
+            location.reload();
         })
 
         if (JSON.parse(localStorage.NotificarOro) == true) {
@@ -487,12 +490,17 @@ class Mercado{
             }
         }
     }
+    static PackageShortcut(){
+        let mainnav = document.getElementById("mainnav").children[0].children[0].children[0].children[0];
+        insertOnPage.beforeend(mainnav,`<td><a href="index.php?mod=packages&${sh.get()}&searchItems" class="awesome-tabs">Paquetes<div class="navBG"></div></a></td>`)
+    }
     static Run(){
         Mercado.Config();
         Mercado.MostrarRotativosSeleccionados();
         Mercado.EliminarRotativo();
         Mercado.VentaRapida();
         Mercado.Comprar();
+        Mercado.PackageShortcut();
     }
 }
 
@@ -1012,6 +1020,11 @@ class Paquetes {
             insertOnPage.beforeend(Busqueda,`<option>`+nombre+`</option>`)
         }
     }
+    static AbrirdesdeMercado(){
+        if(!!getURL[2] == true && getURL[2] == "searchItems"){
+            document.getElementById("buscarRotativos").click();
+        }
+    }
 }
 //style="width: 500px;margin-left: auto;"
 
@@ -1026,6 +1039,9 @@ class TimeSaver{
         if(timeSaverExist==true){
             Menu.addConfig(`
             <h3>TimeSaver</h3>
+            <ul>Pasuar con click
+                <ul><label><input id="TimeSaverStopOnClick" type="checkbox">Detener el bot si se hace click en la pagina<label></ul>
+            </ul>
             <ul>Atajos de Teclado
                 <ul>Pausar Bot: <input maxlength="1" id="timeSaverHotKeySelectedKey" style="width: 100px;background: white;"><button id="Btnconfirmar" title="click para guardar" style="background: transparent; border: transparent;"></button></ul>
                 <ul style="color: #0fea0f;" id="timeSaverHotKeyConfirmation" hidden>✔ Cambios guardados correctamente</ul>
@@ -1045,7 +1061,10 @@ class TimeSaver{
             } else {
                 timeSaverHotKeyCheckbox.checked = JSON.parse(localStorage.timeSaverHotKeyCheckbox);
             }
-            timeSaverHotKeyCheckbox.addEventListener("change",()=>{localStorage.timeSaverHotKeyCheckbox=timeSaverHotKeyCheckbox.checked;})
+            timeSaverHotKeyCheckbox.addEventListener("change",()=>{
+                localStorage.timeSaverHotKeyCheckbox=timeSaverHotKeyCheckbox.checked;
+                location.reload();
+            })
 
             if(localStorage.timeSaverHotKeySelectedKey == undefined){
                 localStorage.timeSaverHotKeySelectedKey = "";
@@ -1055,7 +1074,10 @@ class TimeSaver{
             timeSaverHotKeySelectedKey.addEventListener("keydown",()=>{timeSaverHotKeySelectedKey.select();
                                                                      Btnconfirmar.textContent = "✅";
                                                                     })
-            timeSaverHotKeySelectedKey.addEventListener("change",()=>{localStorage.timeSaverHotKeySelectedKey = timeSaverHotKeySelectedKey.value;})
+            timeSaverHotKeySelectedKey.addEventListener("change",()=>{
+                localStorage.timeSaverHotKeySelectedKey = timeSaverHotKeySelectedKey.value;
+                location.reload();
+            })
         }
     }
 
@@ -1082,6 +1104,26 @@ class TimeSaver{
             botonPlay.click();
         }
     }
+    static StopOnClick(){
+        let TimeSaverStopOnClick = document.getElementById("TimeSaverStopOnClick");
+        if(localStorage.TimeSaverStopOnClick == undefined){
+            localStorage.TimeSaverStopOnClick = false;
+        } else {
+            TimeSaverStopOnClick.checked = JSON.parse(localStorage.TimeSaverStopOnClick);
+        }
+        TimeSaverStopOnClick.addEventListener("change",()=>{
+            localStorage.TimeSaverStopOnClick=TimeSaverStopOnClick.checked;
+            location.reload();
+        })
+        if(JSON.parse(localStorage.TimeSaverStopOnClick) == true){
+            document.addEventListener('mouseup', function(e) {
+                var container = document.getElementsByClassName("auto-settings")[0]
+                if (!container.contains(e.target)) {
+                    TimeSaver.StopBot();
+                }
+            });
+        }
+    }
 }
 
 class ExtenderBotones{
@@ -1091,7 +1133,7 @@ class ExtenderBotones{
         insertOnPage.afterend(menue_packages,`
             <button id="extenderPaquetes" class="awesome-button extederPaquetes" title="Presiona para abrir el menú de paquetes">+</button>
             <div id="menuBotonPaquetes" class="menuBotonPaquetes">
-                <div class="icon-out"><a class="icon food-icon" href="index.php?mod=packages&f=7&fq=-1&qry=&page=1&`+sh.get()+`" title="Ir a paquetes, Utilizable"></a></div>
+                <div class="icon-out"><a class="icon food-icon" href="index.php?mod=packages&f=7&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Utilizable"></a></div>
             </div>
             `);
         let menuBotonPaquetes = document.getElementById("menuBotonPaquetes");
@@ -1135,6 +1177,7 @@ class GuardarOro{
         }
         GuardarOroCheck.addEventListener("change", () => {
             localStorage.GuardarOroCheck = GuardarOroCheck.checked;
+            location.reload();
         })
 
         if (localStorage.TipoDeGuardado == undefined) {
@@ -1186,7 +1229,7 @@ class GuardarOro{
     }
 
     static Guardar(){
-        let EntrenamientoLink = "https://s45-es.gladiatus.gameforge.com/game/index.php?mod=training&"+sh.get();
+        let EntrenamientoLink = "https://s45-es.gladiatus.gameforge.com/game/index.php?mod=training&${sh.get()}";
         let GuardarOroCheck = document.getElementById("GuardarOroCheck")
         if(GuardarOroCheck.checked){
             let tipoDeGuardado = {
@@ -1227,7 +1270,7 @@ class GuardarOro{
                 }
             }
             if(localStorage.PlayerStatsPrices == undefined){
-                window.location.href = "https://s45-es.gladiatus.gameforge.com/game/index.php?mod=training&"+sh.get();
+                window.location.href = "https://s45-es.gladiatus.gameforge.com/game/index.php?mod=training&${sh.get()}";
             }
             data.init()
             let training_box = document.getElementById("training_box");
