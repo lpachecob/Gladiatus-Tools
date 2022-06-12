@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.4.1
+// @version       0.5.0
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -43,6 +43,7 @@ class GladiatusTools{
         }else if(getURL[0] == "?mod=packages"){
             Paquetes.UI();
             Paquetes.MoverFiltros();
+            Paquetes.ExtendsInput();
         }
     }
     static Run(){
@@ -260,6 +261,8 @@ class Notificaciones{
         }
     }
 }
+
+
 
 class Mercado{
     static Config(){
@@ -680,8 +683,16 @@ function SmelteryTimeSaverExtension() {
 			);
 
 			let selectInventario = document.getElementById("SelectInventario");
+            if (localStorage.selectInventario == undefined) {
+                localStorage.selectInventario = selectInventario.selectedIndex
+            } else {
+                selectInventario.selectedIndex = localStorage.selectInventario;
+            }
+            selectInventario.addEventListener("change", () => {
+                localStorage.selectInventario = selectInventario.selectedIndex;
+            })
 
-			let inventoryTabs = document.getElementsByClassName("awesome-tabs");
+            let inventoryTabs = document.getElementsByClassName("awesome-tabs");
 			let inventorySelected;
 			for (let index = 4; index < inventoryTabs.length; index++) {
 				if (inventoryTabs[index].text == localStorage.InventarioFundicion) {
@@ -925,6 +936,82 @@ class Paquetes {
             }
         }
     }
+
+    static ExtendsInput(){
+        let qry = document.getElementsByName("qry")[0];
+        qry.setAttribute("list","Busqueda");
+        qry.type = "search"
+        insertOnPage.afterend(qry,`<datalist id="Busqueda"></datalist>`);
+
+        Menu.addConfig(`
+        <h2>Paquetes</h2>
+        <ul id="ListaNombres" style="display: flex;background-color: white;width: 324px;height: auto;margin-left: 43px;padding: 6px;flex-direction: row;flex-wrap: wrap;">
+           <input type="text" title="Presiona ENTER para guardar." id="InputNombres" placeholder="Nombre de los items a guardar" style="background-color: #bebebe;color: white;font-weight: bold;font-size: 12px;width: 79px;height: 23px;">
+        </ul>
+
+        `);
+
+        let InputNombres = document.getElementById("InputNombres");
+        let NombresGuardados = [];
+        if(localStorage.NombresGuardados == undefined){
+            localStorage.NombresGuardados = '[]';
+        }else{
+            NombresGuardados = JSON.parse(localStorage.NombresGuardados)
+        }
+
+        InputNombres.addEventListener("keypress",(input)=>{
+            if (input.key === 'Enter') {
+                if (!NombresGuardados.includes(InputNombres.value) && InputNombres.value != "") {
+                    NombresGuardados.push(InputNombres.value);
+                    InputNombres.value = "";
+                    localStorage.NombresGuardados = JSON.stringify(NombresGuardados.sort());
+                    window.location.reload()
+                }
+            }
+        });
+        Paquetes.MostrarNombresSeleccionados();
+        Paquetes.addOptionsToDatalist();
+        Paquetes.Eliminar();
+    }
+    static MostrarNombresSeleccionados(){
+        let NombresGuardados = JSON.parse(localStorage.NombresGuardados);
+        let indiceDeRotativoBorrar;
+        let ListaNombres = document.getElementById("ListaNombres");
+        let contador = 0;
+        for(let nombre of NombresGuardados){
+            insertOnPage.beforeend(ListaNombres,`
+               <div style="border-style: groove;color: black;width: fit-content;padding: 2px;font-size: 12px;">
+                   `+nombre+`
+                   <button name="NombreBorrar" data-index="`+contador+`" style="color: red;font-weight: bold;font-size: 16px;border: none;background: none;">x</button>
+               </div>
+           `)
+            contador++;
+        }
+    }
+    static Eliminar(){
+        let NombresGuardados = JSON.parse(localStorage.NombresGuardados);
+        let NombreBorrar = document.getElementsByName("NombreBorrar")
+        for(let boton of NombreBorrar) {
+            boton.addEventListener("click",()=>{
+                NombresGuardados.splice(boton.attributes[1].value,1);
+                localStorage.NombresGuardados = JSON.stringify(NombresGuardados.sort());
+                window.location.reload();
+            })
+            boton.addEventListener("touchstart",()=>{
+                NombresGuardados.splice(boton.attributes[1].value,1)
+                localStorage.NombresGuardados = JSON.stringify(NombresGuardados.sort());
+                window.location.reload()
+            })
+
+        }
+    }
+    static addOptionsToDatalist(){
+        let NombresGuardados = JSON.parse(localStorage.NombresGuardados);
+        let Busqueda = document.getElementById("Busqueda");
+        for(let nombre of NombresGuardados){
+            insertOnPage.beforeend(Busqueda,`<option>`+nombre+`</option>`)
+        }
+    }
 }
 //style="width: 500px;margin-left: auto;"
 
@@ -1018,15 +1105,14 @@ class ExtenderBotones{
                 menuBotonPaquetes.style.display = 'none';
             }
         })
-
-         document.addEventListener('mouseup', function(e) {
-            var container = document.getElementById("extenderPaquetes");
-            if (!container.contains(e.target)) {
+        extenderPaquetes.addEventListener("touchstart",()=>{
+            menuAbierto = !menuAbierto;
+            if(menuAbierto == true){
+                menuBotonPaquetes.style.display = 'block';
+            } else {
                 menuBotonPaquetes.style.display = 'none';
             }
-        });
-
-
+        })
     }
 }
 
