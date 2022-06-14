@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.6.0
+// @version       0.6.1
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -1136,29 +1136,38 @@ class ExtenderBotones{
         let menue_packages = document.getElementById("menue_packages");
         let url = window.location.search.split("&");
         insertOnPage.afterend(menue_packages,`
-            <button id="extenderPaquetes" class="awesome-button extederPaquetes" title="Presiona para abrir el menú de paquetes">+</button>
+            <div id="extenderPaquetes">
+            <button class="awesome-button extederPaquetes" title="Presiona para abrir el menú de paquetes">+</button>
             <div id="menuBotonPaquetes" class="menuBotonPaquetes">
                 <div class="icon-out"><a class="icon food-icon" href="index.php?mod=packages&f=7&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Utilizable"></a></div>
+                <div id="Calidadesboton" class="icon-out dropdown"><a class="extender-dropdown" href="index.php?mod=packages&f=0&fq=-1&qry=&page=1&${sh.get()}"><svg class="svg-extender-color" xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(154 143 143);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a>
+                    <div id="CalidadesDropdown" class="extender-calidad">
+                        <span style="padding-top: 1px;text-decoration-line: underline;">Calidades de objetos</span>
+                        <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=0&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(0 246 0);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
+                        <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=1&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(81 89 247);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
+                        <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=2&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(227 3 224);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
+                        <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=3&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(255 106 0);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
+                        <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=4&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(255 0 0);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
+                    </div>
+                </div>
+            </div>
             </div>
             `);
         let menuBotonPaquetes = document.getElementById("menuBotonPaquetes");
         let extenderPaquetes = document.getElementById("extenderPaquetes");
-        let menuAbierto = false;
-        extenderPaquetes.addEventListener("click",()=>{
-            menuAbierto = !menuAbierto;
-            if(menuAbierto == true){
-                menuBotonPaquetes.style.display = 'block';
-            } else {
-                menuBotonPaquetes.style.display = 'none';
-            }
+        extenderPaquetes.addEventListener("mouseenter",()=>{
+            menuBotonPaquetes.style.display = 'block';
         })
-        extenderPaquetes.addEventListener("touchstart",()=>{
-            menuAbierto = !menuAbierto;
-            if(menuAbierto == true){
-                menuBotonPaquetes.style.display = 'block';
-            } else {
-                menuBotonPaquetes.style.display = 'none';
-            }
+        extenderPaquetes.addEventListener("mouseleave",()=>{
+            menuBotonPaquetes.style.display = 'none';
+        })
+        let Calidadesboton = document.getElementById("Calidadesboton")
+        let CalidadesDropdown = document.getElementById("CalidadesDropdown")
+        Calidadesboton.addEventListener("mouseenter",()=>{
+            CalidadesDropdown.style.display = "block";
+        })
+        Calidadesboton.addEventListener("mouseleave",()=>{
+            CalidadesDropdown.style.display = "none";
         })
     }
 }
@@ -1494,9 +1503,10 @@ insertOnPage.beforeend(document.body,`
      position: absolute;
      opacity: 1;
      background: rgb(222, 210, 173);
-     top: 42px;
-     right: 4px;
+     top: 17px;
+     right: 2px;
      padding: 10px;
+     z-index: 10;
 }
  #menuBotonPaquetes .icon-out {
      float: left;
@@ -1521,6 +1531,38 @@ insertOnPage.beforeend(document.body,`
      border: none;
 }
 
+.extender-dropdown{
+    margin: 0px 6px;
+}
+.dropdown {
+    position: relative;
+    margin: 0px 4px;
+    display: inline-block;
+    border: 1px solid #b3aaaa;
+    background: white;
+}
+.extender-calidad{
+    display: none;
+    right: -119px;
+    left: -5px;
+    top: 19px;
+    position: absolute;
+    background-color: #ded2ad;
+    box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 20%);
+    margin: 6px;
+}
+
+.extender-calidad-dropdown{
+    margin: 5px;
+    padding-block: 5px 4px;
+    background-color: white;
+    border: 1px solid #b3aaaa;
+    float: left;
+}
+
+#header_menue{
+    z-index: 40 !important;
+}
 
 .GTSelectMenu {
     background-color: white;
