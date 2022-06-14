@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.5.1
+// @version       0.6.0
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -856,8 +856,13 @@ class Paquetes {
     `);*/
 
     }
+    static Markethortcut(){
+        let mainnav = document.getElementById("mainnav").children[0].children[0].children[0].children[0];
+        insertOnPage.beforeend(mainnav,`<td><a href="index.php?mod=guildMarket&${sh.get()}&searchItems" class="awesome-tabs">Mercado de la alianza<div class="navBG"></div></a></td>`)
+    }
 
     static UI(){
+        Paquetes.Markethortcut();
         let inventoryBox = document.getElementsByClassName("inventoryBox")[0];
         insertOnPage.afterbegin(inventoryBox,`
         <div>
