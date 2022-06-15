@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.8.3
+// @version       0.8.4
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -1611,11 +1611,6 @@ insertOnPage.beforeend(document.body,`
     /* Handle on hover */
     .auto-settings::-webkit-scrollbar-thumb:hover {
         background: #555;
-    }
-
-    .gts-pause{
-        right: 7px !important;
-        transform: scale(1);
     }
     .auto-settings .content.open{
         background-color: #e7ddba !important;
