@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.6.1
+// @version       0.7.0
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -58,6 +58,8 @@ class GladiatusTools{
             TimeSaver.setKeyForStop(JSON.parse(localStorage.TimeSaverExist));
             TimeSaver.StopOnKey();
             TimeSaver.StopOnClick();
+            TimeSaver.cambiarInterfaz();
+            document.getElementsByClassName("tabs")[0].children[0].destroy();
         });
     }
 }
@@ -1129,6 +1131,9 @@ class TimeSaver{
             });
         }
     }
+    static cambiarInterfaz(){
+
+    }
 }
 
 class ExtenderBotones{
@@ -1569,6 +1574,49 @@ insertOnPage.beforeend(document.body,`
     color: black;
     font-weight: bold;
 }
+
+
+@media only screen and (max-width: 1760px) {
+    .auto-settings {
+        min-height: 47px;
+        position: relative !important;
+        background: #453418 !important;
+        overflow: scroll;
+        overflow-y: hidden;
+        overflow-x: hidden;
+        width: 825px;
+    }
+    .auto-settings ul.tabs {
+        background-image: none !important;
+    }
+    .auto-settings::-webkit-scrollbar {
+        height: 10px;
+    }
+    /* Track */
+    .auto-settings::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    /* Handle */
+    .auto-settings::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+    /* Handle on hover */
+    .auto-settings::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    .gts-pause{
+        right: 7px !important;
+        transform: scale(1);
+    }
+    .auto-settings .content.open{
+        background-color: #e7ddba !important;
+    }
+    body, html {
+    overflow: scroll;
+    height: 893px;
+}
+
 
 </style>
 `)
