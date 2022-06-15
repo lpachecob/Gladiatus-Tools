@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.8.1
+// @version       0.8.2
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -60,6 +60,7 @@ class GladiatusTools{
             TimeSaver.StopOnClick();
             TimeSaver.cambiarInterfaz();
             document.getElementsByClassName("tabs")[0].children[0].destroy();
+            TimeSaver.Touch();
         });
     }
 }
@@ -1042,6 +1043,15 @@ class TimeSaver{
         return timeSaverr;
     }
 
+    static Touch(){
+        if(TimeSaver.Exist() == true){
+            let boton = document.getElementsByClassName("gts-pause show")[0];
+            boton.addEventListener("touchstart",()=>{
+                boton.children[0].click();
+            })
+        }
+    }
+
     static setKeyForStop(timeSaverExist){
         if(timeSaverExist==true){
             Menu.addConfig(`
@@ -1579,7 +1589,6 @@ insertOnPage.beforeend(document.body,`
 @media only screen and (max-width: 1760px) {
     .auto-settings {
         min-height: 47px;
-        position: relative !important;
         background: #453418 !important;
         overflow: scroll;
         overflow-y: hidden;
