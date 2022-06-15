@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.8.2
+// @version       0.8.3
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -1592,7 +1592,6 @@ insertOnPage.beforeend(document.body,`
         background: #453418 !important;
         overflow: scroll;
         overflow-y: hidden;
-        overflow-x: hidden;
         width: 825px;
     }
     .auto-settings ul.tabs {
