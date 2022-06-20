@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.8.5
+// @version       0.8.6
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -39,7 +39,7 @@ class GladiatusTools{
         } else if (getURL[0] == "?mod=forge" && getURL[1] == "submod=smeltery") {
             SmelteryTimeSaverExtension();
         } else if (getURL[0] == "?mod=forge" && getURL[1] == "submod=forge") {
-            Herreria();
+            Herreria.run();
         }else if(getURL[0] == "?mod=packages"){
             Paquetes.UI();
             Paquetes.MoverFiltros();
@@ -53,6 +53,7 @@ class GladiatusTools{
         Notificaciones.Rotativos();
         GuardarOro.Run();
         ExtenderBotones.Paquetes();
+        OuterLinks.run();
         window.addEventListener("load", () => {
             localStorage.TimeSaverExist = TimeSaver.Exist();
             TimeSaver.setKeyForStop(JSON.parse(localStorage.TimeSaverExist));
@@ -125,6 +126,18 @@ class Formatter{
 
         // format number and add suffix
         return scaled.toFixed(1) + suffix;
+    }
+}
+
+class OuterLinks{
+    static GTools(){
+        if(!!document.getElementById("gca_shortcuts_bar")){
+            let gca_shortcuts_bar = document.getElementById("gca_shortcuts_bar");
+            gca_shortcuts_bar.insertAdjacentHTML("beforeend", `<div class="icon-out"><a class="icon gtools-icon" href="https://es.gladiatus-tools.com/" title="Ir a Gladiatus Tools" target="_blank"></a></div>`)
+        }
+    }
+    static run(){
+        OuterLinks.GTools();
     }
 }
 
@@ -813,35 +826,41 @@ function SmelteryTimeSaverExtension() {
 
 }
 
-function Herreria(){
-     /*let selectPrefix0 = document.getElementById("prefix0")
-     selectPrefix0.hidden;
-     selectPrefix0.insertAdjacentHTML("beforebegin",`<input id="inputPrefix" list="prefixList" style="width: 102px;"><datalist id="prefixList"></option></datalist>`);
-     let inputPrefix = document.getElementById("inputPrefix");
-     inputPrefix.setAttribute("onkeyup",selectPrefix0.attributes.onkeyup.textContent);
-     inputPrefix.setAttribute("onchange",selectPrefix0.attributes.onchange.textContent);
-
-     let prefixList = document.getElementById("prefixList");
-     let prefijos = [[],[],[],[]]
-     let prefijosOptgroup = document.getElementsByTagName("optgroup")[0].children
-     for (let index = 0; index < prefijosOptgroup.length; index++) {
-         prefijos[0].push(prefijosOptgroup[index].text)
-         prefijos[1].push(prefijosOptgroup[index].value)
-         prefijos[2].push(prefijosOptgroup[index].attributes["data-level"].textContent);
-         prefijos[2].push(prefijosOptgroup[index].attributes["data-name"].textContent);
+class Herreria {
+     static getItems(){
+         return !!document.getElementsByClassName("crafting_requirements")[0].children[0].children[1].children[0]
      }
-     for (let index = 0; index < prefijos[0].length; index++) {
-         var option = document.createElement('option');
-         option.value = prefijos[0][index];
-         option.setAttribute("data_value",prefijos[1][index]);
-         prefixList.appendChild(option);
-     }
+    static setLinks(){
+        if(Herreria.getItems() == true){
+            let recursos = document.getElementsByClassName("crafting_requirements")[0].children[0].children[1]
+            let recursoslength = recursos.children.length;
+            recursos.insertAdjacentHTML("beforebegin", `<ul id="newResources"></ul>`);
+            let newResources = document.getElementById("newResources");
+            for (let index = 0; index < recursoslength; index++) {
+                let recurso = recursos.children[index]
+                let recursoId = recurso.children[0].className.split("-")[3];
+                let url = `<a name="nuevoRecurso" href="https://es.gladiatus-tools.com/resources?id=${recursoId}"></a>`;
+                newResources.insertAdjacentHTML("beforeend", url);
 
-     inputPrefix.addEventListener("change",()=>{
-         selectPrefix0.selectedIndex = prefijos[0].indexOf(inputPrefix.value);
-         selectPrefix0.value = prefijos[1][prefijos[0].indexOf(inputPrefix.value)];
-     });*/
- }
+            }
+            let nuevoRecurso = document.getElementsByName("nuevoRecurso");
+            for (let index = 0; index < nuevoRecurso.length; index++) {
+                let recurso = recursos.children[0]
+                nuevoRecurso[index].append(recurso)
+            }
+        }
+    }
+    static run(){
+        let newResources = document.getElementById("newResources");
+        //Herreria.setLinks();
+        for (let forgeItem of document.getElementsByClassName("forge_closed")) {
+            forgeItem.addEventListener("click",()=>{
+                newResources.destroy();
+                Herreria.setLinks();
+            })
+        }
+    }
+}
 
 class Paquetes {
     static filtros(){
@@ -1337,7 +1356,6 @@ class GuardarOro{
 
 insertOnPage.beforeend(document.body,`
 <style>
-
  .menutools {
      display: none;
      width: 422px;
@@ -1401,99 +1419,56 @@ insertOnPage.beforeend(document.body,`
          font-size: 18px;
     }
 }
-
-
-
 /* Notifications */
  .notification-box{
-    cursor: pointer;
-    background-position: 15px center;
-    background-repeat: no-repeat;
-    box-shadow: 0 0 12px #000;
-    color: #FFFFFF;
-    margin: 0 0 6px;
-    opacity: 0.9;
-    padding: 5px 5px 5px 28px;
-    width: 200px;
-    white-space: pre-wrap;
+     cursor: pointer;
+     background-position: 15px center;
+     background-repeat: no-repeat;
+     box-shadow: 0 0 12px #000;
+     color: #FFFFFF;
+     margin: 0 0 6px;
+     opacity: 0.9;
+     padding: 5px 5px 5px 28px;
+     width: 200px;
+     white-space: pre-wrap;
      z-index: 10000;
 }
-.notification-info{
-    background-color: #2F96B4;
-    border: 1px solid #267890;
+ .notification-info{
+     background-color: #2F96B4;
+     border: 1px solid #267890;
 }
-
-
- @media only screen and (max-width: 1760px) {
-     .panelBusqueda{
-        position: inherit;
-         height: 41px;
-         width: 299px;
-         background: #ded2ad;
-         left: 305px;
-         top: -33px;
-    }
-     .buscarRotativos{
-        position: relative;
-         right: -22px;
-         top: -26px;
-         color: white;
-         font-weight: bold;
-         font-size: 13px;
-    }
-     .SelectCategorias{
-         position: relative;
-         right: -30px;
-         top: -23px;
-         width: 132px;
-         font-size: 18px;
-    }
-     .Favoritos {
-        position: relative;
-         width: 278px;
-         height: 97px;
-         top: -14px;
-         background: rgb(222, 210, 173);
-         padding: 11px;
-         overflow: scroll;
-         overflow-x: hidden;
-    }
+ .panelBusqueda{
+     position: inherit;
+     height: 41px;
+     width: 299px;
+     background: #ded2ad;
+     left: 305px;
+     top: -33px;
 }
- @media only screen and (min-width: 1760px) {
-     .panelBusqueda{
-        position: absolute;
-        height: 41px;
-        width: 408px;
-        background: #ded2ad;
-        left: 405px;
-        top: -33px;
-    }
-     .buscarRotativos{
-        position: absolute;
-        right: -255px;
-        top: -25px;
-        color: white;
-        font-weight: bold;
-        font-size: 13px;
-    }
-     .SelectCategorias{
-        position: absolute;
-         right: -476px;
-         top: -23px;
-    }
-     .Favoritos {
-        position: absolute;
-         width: 388px;
-         height: 395px;
-         left: 405px;
-         top: 8px;
-         background: rgb(222, 210, 173);
-         padding: 10px;
-         display: block;
-        overflow: scroll;
-        overflow-x: hidden;
-         display:none;
-    }
+ .buscarRotativos{
+     position: relative;
+     right: -22px;
+     top: -26px;
+     color: white;
+     font-weight: bold;
+     font-size: 13px;
+}
+ .SelectCategorias{
+     position: relative;
+     right: -30px;
+     top: -23px;
+     width: 132px;
+     font-size: 18px;
+}
+ .Favoritos {
+     position: relative;
+     width: 278px;
+     height: 97px;
+     top: -14px;
+     background: rgb(222, 210, 173);
+     padding: 11px;
+     overflow: scroll;
+     overflow-x: hidden;
 }
  .Favoritos::-webkit-scrollbar {
      width: 10px;
@@ -1510,10 +1485,7 @@ insertOnPage.beforeend(document.body,`
  .Favoritos::-webkit-scrollbar-thumb:hover {
      background: #555;
 }
-
-
-
-.menuBotonPaquetes {
+ .menuBotonPaquetes {
      display: none;
      position: absolute;
      opacity: 1;
@@ -1534,10 +1506,10 @@ insertOnPage.beforeend(document.body,`
 }
  .food-icon {
      background: transparent url(https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/buttons.png) -395px 0px no-repeat;
- }
+}
  .gold-icon {
-    background: transparent url('https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/buttons.png') -170px 0px no-repeat;
- }
+     background: transparent url('https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/buttons.png') -170px 0px no-repeat;
+}
  .extederPaquetes {
      position: absolute;
      right: -10px;
@@ -1548,85 +1520,79 @@ insertOnPage.beforeend(document.body,`
      background: #8e2a2a;
      border: none;
 }
-
-.extender-dropdown{
-    margin: 0px 6px;
+ .extender-dropdown{
+     margin: 0px 6px;
 }
-.dropdown {
-    position: relative;
-    margin: 0px 4px;
-    display: inline-block;
-    border: 1px solid #b3aaaa;
-    background: white;
+ .dropdown {
+     position: relative;
+     margin: 0px 4px;
+     display: inline-block;
+     border: 1px solid #b3aaaa;
+     background: white;
 }
-.extender-calidad{
-    display: none;
-    right: -119px;
-    left: -5px;
-    top: 19px;
-    position: absolute;
-    background-color: #ded2ad;
-    box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 20%);
-    margin: 6px;
+ .extender-calidad{
+     display: none;
+     right: -119px;
+     left: -5px;
+     top: 19px;
+     position: absolute;
+     background-color: #ded2ad;
+     box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 20%);
+     margin: 6px;
 }
-
-.extender-calidad-dropdown{
-    margin: 5px;
-    padding-block: 5px 4px;
-    background-color: white;
-    border: 1px solid #b3aaaa;
-    float: left;
+ .extender-calidad-dropdown{
+     margin: 5px;
+     padding-block: 5px 4px;
+     background-color: white;
+     border: 1px solid #b3aaaa;
+     float: left;
 }
-
-#header_menue{
-    z-index: 40 !important;
+ #header_menue{
+     z-index: 40 !important;
 }
-
-.GTSelectMenu {
-    background-color: white;
-    color: black;
-    font-weight: bold;
+ .GTSelectMenu {
+     background-color: white;
+     color: black;
+     font-weight: bold;
 }
-.collapsed{
-    display: none;
+ .collapsed{
+     display: none;
 }
-
-
-@media only screen and (max-width: 1760px) {
-    .auto-settings {
-        min-height: 47px;
-        background: #453418 !important;
-        overflow: scroll;
-        overflow-y: hidden;
-        width: 850px;
+ @media only screen and (max-width: 1760px) {
+     .auto-settings {
+         background: #453418 !important;
+         width: 850px;
     }
-    .auto-settings ul.tabs {
-        background-image: none !important;
+     .auto-settings ul.tabs {
+         background-image: none !important;
     }
-    .auto-settings::-webkit-scrollbar {
-        height: 10px;
+     .auto-settings::-webkit-scrollbar {
+         height: 10px;
     }
     /* Track */
-    .auto-settings::-webkit-scrollbar-track {
-        background: #f1f1f1;
+     .auto-settings::-webkit-scrollbar-track {
+         background: #f1f1f1;
     }
     /* Handle */
-    .auto-settings::-webkit-scrollbar-thumb {
-        background: #888;
+     .auto-settings::-webkit-scrollbar-thumb {
+         background: #888;
     }
     /* Handle on hover */
-    .auto-settings::-webkit-scrollbar-thumb:hover {
-        background: #555;
+     .auto-settings::-webkit-scrollbar-thumb:hover {
+         background: #555;
     }
-    .auto-settings .content.open{
-        background-color: #e7ddba !important;
+     .auto-settings .content.open{
+         background-color: #e7ddba !important;
     }
-    .gts-pause{
-        right: 7px !important;
+     .gts-pause{
+         right: 7px !important;
     }
 }
 
-
+.gtools-icon {
+    background: #b79a63 url(https://es.gladiatus-tools.com/favicon.png);
+    background-size: cover;
+}
 </style>
 `)
 
