@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.8.6
+// @version       0.8.7
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -509,6 +509,17 @@ class Mercado{
         let mainnav = document.getElementById("mainnav").children[0].children[0].children[0].children[0];
         insertOnPage.beforeend(mainnav,`<td><a href="index.php?mod=packages&${sh.get()}&searchItems" class="awesome-tabs">Paquetes<div class="navBG"></div></a></td>`)
     }
+    static ValorDeRotativosEnVenta(){
+        let market_item_table = document.getElementById("market_item_table").children[0].children
+        let TotalDePaquetesSinComprar = 0
+        for (let item of market_item_table) {
+            if(item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].style.color == "green"){
+                TotalDePaquetesSinComprar = TotalDePaquetesSinComprar + parseInt(item.children[2].innerText.replace(/\./g, ''));
+            }
+        }
+        let standalone = document.getElementsByClassName("standalone")[0]
+        insertOnPage.beforeend(standalone,`<div id="MontodeRotativos">Oro total en venta: ${Formatter.abbreviateNumber(TotalDePaquetesSinComprar)}<img alt="" src="9407/img/res2.gif" title="Oro" align="absmiddle" border="0"></div>`)
+    }
     static Run(){
         Mercado.Config();
         Mercado.MostrarRotativosSeleccionados();
@@ -516,6 +527,7 @@ class Mercado{
         Mercado.VentaRapida();
         Mercado.Comprar();
         Mercado.PackageShortcut();
+        Mercado.ValorDeRotativosEnVenta();
     }
 }
 
@@ -1173,7 +1185,9 @@ class ExtenderBotones{
             <button class="awesome-button extederPaquetes" title="Presiona para abrir el menú de paquetes">+</button>
             <div id="menuBotonPaquetes" class="menuBotonPaquetes">
                 <div class="icon-out"><a class="icon food-icon" href="index.php?mod=packages&f=7&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Utilizable"></a></div>
-                <div class="icon-out"><a class="icon gold-icon" href="index.php?mod=packages&f=14&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, oro"></a></div>
+                <div class="icon-out"><a class="icon gold-icon" href="index.php?mod=packages&f=14&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Oro"></a></div>
+                <div class="icon-out"><a class="icon tool-icon" href="index.php?mod=packages&f=19&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Herramientas"></a></div>
+                <div class="icon-out"><a class="icon pergamino-icon" href="index.php?mod=packages&f=20&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Herramientas"></a></div>
                 <div id="Calidadesboton" class="icon-out dropdown"><a class="extender-dropdown" href="index.php?mod=packages&f=0&fq=-1&qry=&page=1&${sh.get()}"><svg class="svg-extender-color" xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(154 143 143);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a>
                     <div id="CalidadesDropdown" class="extender-calidad">
                         <span style="padding-top: 1px;text-decoration-line: underline;">Calidades de objetos</span>
@@ -1485,17 +1499,18 @@ insertOnPage.beforeend(document.body,`
  .Favoritos::-webkit-scrollbar-thumb:hover {
      background: #555;
 }
- .menuBotonPaquetes {
-     display: none;
-     position: absolute;
-     opacity: 1;
-     background: rgb(222, 210, 173);
-     top: 17px;
-     right: 2px;
-     padding: 10px;
-     z-index: 10;
+.menuBotonPaquetes {
+    display: none;
+    position: absolute;
+    opacity: 1;
+    background: rgb(222, 210, 173);
+    top: 17px;
+    right: -15px;
+    padding: 10px;
+    z-index: 10;
 }
- #menuBotonPaquetes .icon-out {
+
+#menuBotonPaquetes .icon-out {
      float: left;
 }
  #menuBotonPaquetes .icon {
@@ -1510,6 +1525,21 @@ insertOnPage.beforeend(document.body,`
  .gold-icon {
      background: transparent url('https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/buttons.png') -170px 0px no-repeat;
 }
+.tool-icon {
+    background: #9f824e url(https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/item.png) 0px -6881px no-repeat;
+    height: 25px !important;
+    width: 38px !important;
+    transform: scale(0.9);
+}
+
+.pergamino-icon {
+    background: url(https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/item.png) 0px -8226px no-repeat;
+    height: 25px !important;
+    width: 38px !important;
+    transform: scale(0.8);
+}
+
+
  .extederPaquetes {
      position: absolute;
      right: -10px;
@@ -1525,7 +1555,6 @@ insertOnPage.beforeend(document.body,`
 }
  .dropdown {
      position: relative;
-     margin: 0px 4px;
      display: inline-block;
      border: 1px solid #b3aaaa;
      background: white;
@@ -1592,6 +1621,11 @@ insertOnPage.beforeend(document.body,`
 .gtools-icon {
     background: #b79a63 url(https://es.gladiatus-tools.com/favicon.png);
     background-size: cover;
+}
+#MontodeRotativos{
+    position: relative;
+    top: -18px;
+    right: -306px;
 }
 </style>
 `)
