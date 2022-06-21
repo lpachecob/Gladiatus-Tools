@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.8.9
+// @version       0.8.10
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -441,7 +441,7 @@ class Mercado{
 			TipoCompra.addEventListener("change", (event) => {
 				localStorage.TipoCompra = TipoCompra.selectedIndex;
 			});
-        let market_item_table = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color)
+        let market_item_table = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color == "green")
         let marketItems = [];
         for (let item of market_item_table) {
                 if(MontosMercado.includes(item.children[2].innerText.replace(/\./g, ''))){
@@ -479,7 +479,7 @@ class Mercado{
             let valor = parseInt(item.children[2].innerText.replace(/\./g, ''))
             if(valor < oro){
                 item.children[5].children[0].click();
-                oro = oro - valor;
+                break;
             }
         }
     }
@@ -500,7 +500,6 @@ class Mercado{
             let valor = parseInt(item.children[2].innerText.replace(/\./g, ''))
             if(valor < oro){
                 item.children[5].children[0].click();
-                oro = oro - valor;
             }
         }
     }
@@ -509,7 +508,7 @@ class Mercado{
         insertOnPage.beforeend(mainnav,`<td><a href="index.php?mod=packages&${sh.get()}&searchItems" class="awesome-tabs">Paquetes<div class="navBG"></div></a></td>`)
     }
     static ValorDeRotativosEnVenta(){
-        let market_item_table = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color)
+        let market_item_table = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color == "green")
         let TotalDePaquetesSinComprar = 0
         for (let item of market_item_table) {
             TotalDePaquetesSinComprar = TotalDePaquetesSinComprar + parseInt(item.children[2].innerText.replace(/\./g, ''));
