@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.8.7
+// @version       0.8.8
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -510,12 +510,10 @@ class Mercado{
         insertOnPage.beforeend(mainnav,`<td><a href="index.php?mod=packages&${sh.get()}&searchItems" class="awesome-tabs">Paquetes<div class="navBG"></div></a></td>`)
     }
     static ValorDeRotativosEnVenta(){
-        let market_item_table = document.getElementById("market_item_table").children[0].children
+        let market_item_table = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color)
         let TotalDePaquetesSinComprar = 0
         for (let item of market_item_table) {
-            if(item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].style.color == "green"){
-                TotalDePaquetesSinComprar = TotalDePaquetesSinComprar + parseInt(item.children[2].innerText.replace(/\./g, ''));
-            }
+            TotalDePaquetesSinComprar = TotalDePaquetesSinComprar + parseInt(item.children[2].innerText.replace(/\./g, ''));
         }
         let standalone = document.getElementsByClassName("standalone")[0]
         insertOnPage.beforeend(standalone,`<div id="MontodeRotativos">Oro total en venta: ${Formatter.abbreviateNumber(TotalDePaquetesSinComprar)}<img alt="" src="9407/img/res2.gif" title="Oro" align="absmiddle" border="0"></div>`)
@@ -946,7 +944,6 @@ class Paquetes {
         } else {mensaje.innerHTML = `
         <div title="Se recomienda utilizar la extención gladiatus crazy addon\ny colocar el 'Número de paginas a cargar' desde 10 en adelante" style="text-align: center;">
              No se encontraron objetos, intenta nuevamente.
-             <?xml version="1.0" ?><svg style="width: 13px; margin-top: -42px; margin-bottom: -25px; margin-left: 281px;" height="48" viewBox="0 0 48 48" width="48" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h48v48h-48z" fill="none"/><path d="M22 34h4v-12h-4v12zm2-30c-11.05 0-20 8.95-20 20s8.95 20 20 20 20-8.95 20-20-8.95-20-20-20zm0 36c-8.82 0-16-7.18-16-16s7.18-16 16-16 16 7.18 16 16-7.18 16-16 16zm-2-22h4v-4h-4v4z"/></svg>
         </div>
         <br/>`;}
     }
@@ -1182,23 +1179,28 @@ class ExtenderBotones{
         let url = window.location.search.split("&");
         insertOnPage.afterend(menue_packages,`
             <div id="extenderPaquetes">
-            <button class="awesome-button extederPaquetes" title="Presiona para abrir el menú de paquetes">+</button>
+            <button class="awesome-button extederPaquetes">+</button>
             <div id="menuBotonPaquetes" class="menuBotonPaquetes">
-                <div class="icon-out"><a class="icon food-icon" href="index.php?mod=packages&f=7&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Utilizable"></a></div>
-                <div class="icon-out"><a class="icon gold-icon" href="index.php?mod=packages&f=14&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Oro"></a></div>
-                <div class="icon-out"><a class="icon tool-icon" href="index.php?mod=packages&f=19&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Herramientas"></a></div>
-                <div class="icon-out"><a class="icon pergamino-icon" href="index.php?mod=packages&f=20&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Herramientas"></a></div>
-                <div id="Calidadesboton" class="icon-out dropdown"><a class="extender-dropdown" href="index.php?mod=packages&f=0&fq=-1&qry=&page=1&${sh.get()}"><svg class="svg-extender-color" xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(154 143 143);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a>
-                    <div id="CalidadesDropdown" class="extender-calidad">
-                        <span style="padding-top: 1px;text-decoration-line: underline;">Calidades de objetos</span>
-                        <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=0&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(0 246 0);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
-                        <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=1&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(81 89 247);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
-                        <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=2&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(227 3 224);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
-                        <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=3&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(255 106 0);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
-                        <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=4&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(255 0 0);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
+                <titulo style="display: block;">
+                    Links a paquetes
+                </titulo>
+                <submenu style="display: block;">
+                    <div class="icon-out"><a class="icon food-icon" href="index.php?mod=packages&f=7&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Utilizable"></a></div>
+                    <div class="icon-out"><a class="icon gold-icon" href="index.php?mod=packages&f=14&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Oro"></a></div>
+                    <div class="icon-out"><a class="icon tool-icon" href="index.php?mod=packages&f=19&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Herramientas"></a></div>
+                    <div class="icon-out"><a class="icon pergamino-icon" href="index.php?mod=packages&f=20&fq=-1&qry=&page=1&${sh.get()}" title="Ir a paquetes, Herramientas"></a></div>
+                    <div id="Calidadesboton" class="icon-out dropdown"><a class="extender-dropdown" href="index.php?mod=packages&f=0&fq=-1&qry=&page=1&${sh.get()}"><svg class="svg-extender-color" xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(154 143 143);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a>
+                        <div id="CalidadesDropdown" class="extender-calidad">
+                            <span style="padding-top: 1px;text-decoration-line: underline;">Calidades de objetos</span>
+                            <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=0&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(0 246 0);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
+                            <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=1&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(81 89 247);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
+                            <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=2&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(227 3 224);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
+                            <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=3&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(255 106 0);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
+                            <div class="extender-calidad-dropdown"><a href="index.php?mod=packages&f=0&fq=4&qry=&page=1&${sh.get()}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" style="fill: rgb(255 0 0);"><path d="M22 8a.76.76 0 0 0 0-.21v-.08a.77.77 0 0 0-.07-.16.35.35 0 0 0-.05-.08l-.1-.13-.08-.06-.12-.09-9-5a1 1 0 0 0-1 0l-9 5-.09.07-.11.08a.41.41 0 0 0-.07.11.39.39 0 0 0-.08.1.59.59 0 0 0-.06.14.3.3 0 0 0 0 .1A.76.76 0 0 0 2 8v8a1 1 0 0 0 .52.87l9 5a.75.75 0 0 0 .13.06h.1a1.06 1.06 0 0 0 .5 0h.1l.14-.06 9-5A1 1 0 0 0 22 16V8zm-10 3.87L5.06 8l2.76-1.52 6.83 3.9zm0-7.72L18.94 8 16.7 9.25 9.87 5.34zM4 9.7l7 3.92v5.68l-7-3.89zm9 9.6v-5.68l3-1.68V15l2-1v-3.18l2-1.11v5.7z"></path></svg></a></div>
+                        </div>
                     </div>
+                    </submenu>
                 </div>
-            </div>
             </div>
             `);
         let menuBotonPaquetes = document.getElementById("menuBotonPaquetes");
@@ -1465,24 +1467,24 @@ insertOnPage.beforeend(document.body,`
      top: -26px;
      color: white;
      font-weight: bold;
-     font-size: 13px;
+     font-size: 12px;
 }
- .SelectCategorias{
-     position: relative;
-     right: -30px;
-     top: -23px;
-     width: 132px;
-     font-size: 18px;
+.SelectCategorias {
+    position: relative;
+    right: -39px;
+    top: -23px;
+    width: 130px;
+    font-size: 15px;
 }
- .Favoritos {
-     position: relative;
-     width: 278px;
-     height: 97px;
-     top: -14px;
-     background: rgb(222, 210, 173);
-     padding: 11px;
-     overflow: scroll;
-     overflow-x: hidden;
+.Favoritos {
+    position: relative;
+    width: 278px;
+    height: 97px;
+    top: -24px;
+    background: rgb(222, 210, 173);
+    padding: 10px 20px 0px 0;
+    overflow: scroll;
+    overflow-x: hidden;
 }
  .Favoritos::-webkit-scrollbar {
      width: 10px;
@@ -1508,6 +1510,7 @@ insertOnPage.beforeend(document.body,`
     right: -15px;
     padding: 10px;
     z-index: 10;
+    max-width: 95px;
 }
 
 #menuBotonPaquetes .icon-out {
