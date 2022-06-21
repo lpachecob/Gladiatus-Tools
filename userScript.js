@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.8.8
+// @version       0.8.9
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -441,14 +441,11 @@ class Mercado{
 			TipoCompra.addEventListener("change", (event) => {
 				localStorage.TipoCompra = TipoCompra.selectedIndex;
 			});
-
-        let marketTableChildren = document.getElementById("market_table").children[0].children[0].children
+        let market_item_table = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color)
         let marketItems = [];
-        for (let item of marketTableChildren) {
-            if(item.tagName == "TR" && item.children[0].tagName == "TD" && item.children[1].children[0].children[0].style.color == "green"){
+        for (let item of market_item_table) {
                 if(MontosMercado.includes(item.children[2].innerText.replace(/\./g, ''))){
                     marketItems.push(item)
-                }
             }
         }
         CompraTodo.addEventListener("click",()=>{
@@ -466,19 +463,20 @@ class Mercado{
         })
     }
     static Mayor_Menor(marketItems){
-        let aux = marketItems[0].children[2].innerText.replace(/\./g, '')
         let oro = parseInt(document.getElementById("sstat_gold_val").textContent.replace(/\./g, ''));
-        let orden = []
-        for (let item of marketItems) {
-            if(item.children[2].innerText.replace(/\./g, '') >= aux){
-                orden.unshift(item)
+        let orden = marketItems;
+        orden.sort(function(a,b){
+            if (parseInt(a.children[2].innerText.replace(/\./g, '')) < parseInt(b.children[2].innerText.replace(/\./g, ''))) {
+                return 1;
             }
-            aux = item.children[2].innerText.replace(/\./g, '');
-        }
+            if (parseInt(a.children[2].innerText.replace(/\./g, '')) > parseInt(b.children[2].innerText.replace(/\./g, ''))) {
+                return -1;
+            }
+            // a must be equal to b
+            return 0;
+        })
         for (let item of orden){
             let valor = parseInt(item.children[2].innerText.replace(/\./g, ''))
-            //;
-            //console.log(item.children[2].innerText.replace(/\./g, ''))
             if(valor < oro){
                 item.children[5].children[0].click();
                 oro = oro - valor;
@@ -486,19 +484,20 @@ class Mercado{
         }
     }
     static Menor_Mayor(marketItems){
-        let aux = marketItems[0].children[2].innerText.replace(/\./g, '')
         let oro = parseInt(document.getElementById("sstat_gold_val").textContent.replace(/\./g, ''));
-        let orden = []
-        for (let item of marketItems) {
-            if(item.children[2].innerText.replace(/\./g, '') >= aux){
-                orden.push(item)
+        let orden = marketItems;
+        orden.sort(function(a,b){
+            if (parseInt(a.children[2].innerText.replace(/\./g, '')) > parseInt(b.children[2].innerText.replace(/\./g, ''))) {
+                return 1;
             }
-            aux = item.children[2].innerText.replace(/\./g, '');
-        }
+            if (parseInt(a.children[2].innerText.replace(/\./g, '')) < parseInt(b.children[2].innerText.replace(/\./g, ''))) {
+                return -1;
+            }
+            // a must be equal to b
+            return 0;
+        })
         for (let item of orden){
             let valor = parseInt(item.children[2].innerText.replace(/\./g, ''))
-            //;
-            //console.log(item.children[2].innerText.replace(/\./g, ''))
             if(valor < oro){
                 item.children[5].children[0].click();
                 oro = oro - valor;
