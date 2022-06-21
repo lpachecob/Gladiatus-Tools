@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.8.10
+// @version       0.9.0
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -516,6 +516,16 @@ class Mercado{
         let standalone = document.getElementsByClassName("standalone")[0]
         insertOnPage.beforeend(standalone,`<div id="MontodeRotativos">Oro total en venta: ${Formatter.abbreviateNumber(TotalDePaquetesSinComprar)}<img alt="" src="9407/img/res2.gif" title="Oro" align="absmiddle" border="0"></div>`)
     }
+    static ColorearMercado(){
+        let itemsParaComprar = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color == "green");
+        let itemsVendidos = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color == "blue");
+        for(let item of itemsParaComprar){
+            item.style["background-color"] = "#0b800057"
+        }
+        for(let item of itemsVendidos){
+            item.style["background-color"] = "#ff000057"
+        }
+    }
     static Run(){
         Mercado.Config();
         Mercado.MostrarRotativosSeleccionados();
@@ -524,6 +534,7 @@ class Mercado{
         Mercado.Comprar();
         Mercado.PackageShortcut();
         Mercado.ValorDeRotativosEnVenta();
+        Mercado.ColorearMercado();
     }
 }
 
