@@ -59,8 +59,6 @@ Normalmente las actualizaciones se veran reflejadas en el [repositorio de github
 
 ## Feedback
 
-If you have any feedback, please reach out to us at fake@fake.com
-
 Si deseas dar sugerencias o ideas para implementar son bienvenidas, puedes dejar una [Issue en github](https://github.com/lpachecob/Gladiatus-Tools/issues/new), o un comentario en [greasyfork](https://greasyfork.org/es/scripts/444338-gladiatus-tools/feedback)
 
 ## License
