@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.9.1
+// @version       0.9.2
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -344,7 +344,7 @@ class Mercado{
         }
     }
     static VentaRapida(){
-        let panelVenta = document.getElementById("sellForm");
+        let market_sell_box = document.getElementById("market_sell_box")
         let inputPrecio = document.getElementById("preis");
         let inputDuracion = document.getElementById("dauer");
         let botonVender = document.getElementsByName("anbieten")[0];
@@ -357,8 +357,9 @@ class Mercado{
             <h2 id="VentaRapidaMenuTitle" class="section-header" style="cursor: pointer;">Venta Rapida</h2>
 	        <section id="VentaRapidaMenu" style="display: block;"> <p>Coloca un item y elige el precio para vender.</p> </section>
         `);
-        insertOnPage.beforebegin(panelVenta,`
-	        <section id="CompraRapidaMenu" style="display: block; margin: 12px;">
+        insertOnPage.afterbegin(market_sell_box,`
+            <h2 class="section-header" style="cursor: pointer; margin-top: 5px;">Comprar</h2>
+	        <section id="CompraRapidaMenu" style="display: block; margin-bottom: -8px;">
                 <label title="Solo se comprarán los objetos cuyo valor sea igual a los que tienen los rotativos" style="cursor: pointer;">
                     <button id="CompraTodo" class="awesome-button">Comprar</button>
                 </label>
