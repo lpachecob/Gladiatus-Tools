@@ -13,6 +13,8 @@ Script con atajos y funciones que facilitan la jugabilidad de Gladiatus
 
 o si ya tienes instaladas las extenciones de Trampermonkey o Violentmonkey puedes instalarlo directamente desde aqui:
 
+<sub>Presiona aqui para instalar</sub>
+
 [![Tampermonkey](https://img.shields.io/static/v1?style=for-the-badge&message=Tampermonkey&color=00485B&logo=Tampermonkey&logoColor=FFFFFF&label=)](https://greasyfork.org/scripts/444338-gladiatus-tools/code/Gladiatus%20Tools.user.js)
 
 
