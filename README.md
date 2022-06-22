@@ -76,7 +76,7 @@ o si ya tienes instaladas las extenciones de Trampermonkey o Violentmonkey puede
     
      <img src="https://github.com/lpachecob/Gladiatus-Tools/blob/main/images/screenshots/Menu.png?raw=true">
 
-     <img src="https://github.com/lpachecob/Gladiatus-Tools/blob/main/images/screenshots/MenuAbierto.png?raw=true" width="32.2%">
+     <img src="https://github.com/lpachecob/Gladiatus-Tools/blob/main/images/screenshots/MenuAbierto.png?raw=true">
 
 
 ## FAQ
