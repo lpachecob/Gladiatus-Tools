@@ -1,4 +1,6 @@
-
+![Greasy Fork](https://img.shields.io/greasyfork/v/444338-gladiatus-tools?color=green&label=Version%20Script)
+![Greasy Fork](https://img.shields.io/greasyfork/dt/444338-gladiatus-tools)
+![GitHub](https://img.shields.io/github/license/lpachecob/Gladiatus-Tools)
 # Gladiatus Tools
 
 Script con atajos y funciones que facilitan la jugabilidad de Gladiatus
