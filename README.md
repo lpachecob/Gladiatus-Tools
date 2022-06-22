@@ -1,15 +1,15 @@
-![Greasy Fork](https://img.shields.io/greasyfork/v/444338-gladiatus-tools?color=green&label=Version%20Script)
+![Greasy Fork](https://img.shields.io/greasyfork/v/444338-gladiatus-tools)
 ![Greasy Fork](https://img.shields.io/greasyfork/dt/444338-gladiatus-tools)
 ![GitHub](https://img.shields.io/github/license/lpachecob/Gladiatus-Tools)
 # Gladiatus Tools
 
 Script con atajos y funciones que facilitan la jugabilidad de Gladiatus
 
-### Ultima version del script ![Greasy Fork](https://img.shields.io/greasyfork/v/444338-gladiatus-tools?color=green&label=%20)
+### INSTALACIÓN
 
 <sub>Para instalar este script puedes dirigirte a la pagina de greasyfork:</sub>
 
-[![Greasy Fork](https://img.shields.io/greasyfork/v/444338-gladiatus-tools?label=Greasy%20Fork)](https://greasyfork.org/es/scripts/444338-gladiatus-tools)
+[![Greasy Fork](https://img.shields.io/greasyfork/v/444338-gladiatus-tools)](https://greasyfork.org/es/scripts/444338-gladiatus-tools)
 
 o si ya tienes instaladas las extenciones de Trampermonkey o Violentmonkey puedes instalarlo directamente desde aqui:
 
