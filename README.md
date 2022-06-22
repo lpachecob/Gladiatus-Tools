@@ -5,11 +5,11 @@
 
 Script con atajos y funciones que facilitan la jugabilidad de Gladiatus
 
+### Ultima version del script ![Greasy Fork](https://img.shields.io/greasyfork/v/444338-gladiatus-tools?color=green&label=%20)
 
-## Authors
+<sub>Para instalar este script puedes dirigirte a la pagina de greasyfork:</sub>
 
-- [@lpachecob](https://github.com/lpachecob)
-
+<a href="https://greasyfork.org/es/scripts/444338-gladiatus-tools" target="_blank">[![Greasy Fork](https://img.shields.io/greasyfork/v/444338-gladiatus-tools?label=Greasy%20Fork)](https://greasyfork.org/es/scripts/444338-gladiatus-tools)</a>
 
 ## Features
 
@@ -62,6 +62,10 @@ Normalmente las actualizaciones se veran reflejadas en el [repositorio de github
 ## Feedback
 
 Si deseas dar sugerencias o ideas para implementar son bienvenidas, puedes dejar una [Issue en github](https://github.com/lpachecob/Gladiatus-Tools/issues/new), o un comentario en [greasyfork](https://greasyfork.org/es/scripts/444338-gladiatus-tools/feedback)
+
+## Autor
+
+- [@lpachecob](https://github.com/lpachecob)
 
 ## License
 
