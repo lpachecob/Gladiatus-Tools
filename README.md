@@ -50,7 +50,7 @@ o si ya tienes instaladas las extenciones de Trampermonkey o Violentmonkey puede
    Con la ultima actualizacion del juego se añadieron banderas cerca de los nombres de manera que para una mejor vista    de que puedes comprar y que has vendido cambiamos el color de la columna de los objetos que puedes comprar a verde.
 
 
-<img src="https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/screenshots/MercadoDeAlianzaColoreado.png?raw=true">
+    <img src="https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/screenshots/MercadoDeAlianzaColoreado.png?raw=true">
 
 
 - Subasta
