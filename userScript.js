@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.9.3
+// @version       0.9.4
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -510,12 +510,18 @@ class Mercado{
     }
     static ValorDeRotativosEnVenta(){
         let market_item_table = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color == "green")
+        let market_item_tableSelled = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color == "blue")
         let TotalDePaquetesSinComprar = 0
         for (let item of market_item_table) {
             TotalDePaquetesSinComprar = TotalDePaquetesSinComprar + parseInt(item.children[2].innerText.replace(/\./g, ''));
         }
+        let TotalDePaquetesVendidos = 0
+        for (let item of market_item_tableSelled) {
+            TotalDePaquetesVendidos = TotalDePaquetesVendidos + parseInt(item.children[2].innerText.replace(/\./g, ''));
+        }
         let standalone = document.getElementsByClassName("standalone")[0]
-        insertOnPage.beforeend(standalone,`<div id="MontodeRotativos">Oro total en venta: ${Formatter.abbreviateNumber(TotalDePaquetesSinComprar)}<img alt="" src="9407/img/res2.gif" title="Oro" align="absmiddle" border="0"></div>`)
+        insertOnPage.beforeend(standalone,`<div id="MontodeRotativos">Oro total por comprar: ${Formatter.abbreviateNumber(TotalDePaquetesSinComprar)}<img alt="" src="9407/img/res2.gif" title="Oro" align="absmiddle" border="0"></div>`)
+        insertOnPage.beforeend(standalone,`<div id="MontodeRotativos">Oro total Vendido: ${Formatter.abbreviateNumber(TotalDePaquetesVendidos)}<img alt="" src="9407/img/res2.gif" title="Oro" align="absmiddle" border="0"></div>`)
     }
     static ColorearMercado(){
         let itemsParaComprar = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color == "green");
