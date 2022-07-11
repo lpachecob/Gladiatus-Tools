@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.9.4
+// @version       0.10.0
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -89,7 +89,7 @@ class Observer{
         const observer = new MutationObserver((mutationList) => {
             mutationList.forEach((mutation)=> {
                 if(mutation.removedNodes.length){
-                    instructions();
+                    this.instructions();
 
                 }
             })
@@ -506,7 +506,11 @@ class Mercado{
     }
     static PackageShortcut(){
         let mainnav = document.getElementById("mainnav").children[0].children[0].children[0].children[0];
-        insertOnPage.beforeend(mainnav,`<td><a href="index.php?mod=packages&${sh.get()}&searchItems" class="awesome-tabs">Paquetes<div class="navBG"></div></a></td>`)
+        if(getURL[getURL.length-1].slice(0,11).includes("precioventa") == true){
+            insertOnPage.beforeend(mainnav,`<td><a id="irapaquetes" href="index.php?mod=packages&${sh.get()}&searchItems&${getURL[getURL.length-1]}" class="awesome-tabs">Paquetes<div class="navBG"></div></a></td>`)
+        } else {
+            insertOnPage.beforeend(mainnav,`<td><a href="index.php?mod=packages&${sh.get()}&searchItems" class="awesome-tabs">Paquetes<div class="navBG"></div></a></td>`)
+        }
     }
     static ValorDeRotativosEnVenta(){
         let market_item_table = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color == "green")
@@ -530,6 +534,66 @@ class Mercado{
         }
 
     }
+    static ObtenerItemsComprados(){
+        let init = {
+            ponerContenedor(){
+                let inventoryBox =document.getElementsByClassName("inventoryBox")[0]
+                insertOnPage.beforebegin(inventoryBox,`<div id="paquetesMercado"></div>`)
+            },
+            ponerBotonBusqueda(){
+                let paquetesMercado = document.getElementById("paquetesMercado");
+                insertOnPage.afterbegin(paquetesMercado, `<button id="obtenerPaquetes" class="awesome-button" style="display: block;position: relative;left: 175px;margin-top: 9px;">Obtener Paquetes</button>`)
+            },
+            eventos(){
+                let obtenerPaquetes = document.getElementById("obtenerPaquetes");
+                obtenerPaquetes.addEventListener("click", init.buscar)
+            },
+            ranuras(){
+                this.slots = [];
+                for (let i = 0; i < 6; i++) {
+                    let wrapper = document.createElement('div');
+                    wrapper.className = "magus_itembox";
+                    wrapper.style.display = 'none';
+                    wrapper.style.position = 'relative';
+                    wrapper.style.margin = '0 auto';
+                    this.wrapper.appendChild(wrapper);
+                    this.slots.push({
+                        triggered : false,
+                        active : false,
+                        slot : i,
+                        item : null,
+                        wrapper : wrapper
+                    });
+                }
+            },
+            buscar(){
+
+            }
+        }
+        init.ponerContenedor();
+        init.ponerBotonBusqueda();
+        init.eventos();
+    }
+    static AddVariableToForm(){
+        let market_item_table_TR = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color == "green")
+        let market_item_table_FORMS = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "FORM")
+        for (let [indice, objeto] of market_item_table_TR.entries()){
+            let precio = objeto.children[2].innerText.replace('.',"").replace('.',"");
+            market_item_table_FORMS[indice].action = market_item_table_FORMS[indice].action+`&precioventa=${precio}`
+        }
+    }
+    static AutoCompra(){
+        let market_item_table_TR = Array.from(document.getElementById("market_item_table").children[0].children).filter(item => item.tagName == "TR" && !!item.children[0].style["background-image"] && item.children[1].children[0].children[0].children[0].style.color == "green")
+
+
+        if(market_item_table_TR.length > 0){
+        //ejecutar compra
+        }
+
+
+
+
+    }
     static Run(){
         Mercado.Config();
         Mercado.MostrarRotativosSeleccionados();
@@ -539,6 +603,8 @@ class Mercado{
         Mercado.PackageShortcut();
         Mercado.ValorDeRotativosEnVenta();
         Mercado.ColorearMercado();
+        Mercado.AddVariableToForm();
+        //Mercado.ObtenerItemsComprados();
     }
 }
 
@@ -902,7 +968,7 @@ class Paquetes {
     }
     static Markethortcut(){
         let mainnav = document.getElementById("mainnav").children[0].children[0].children[0].children[0];
-        insertOnPage.beforeend(mainnav,`<td><a href="index.php?mod=guildMarket&${sh.get()}&searchItems" class="awesome-tabs">Mercado de la alianza<div class="navBG"></div></a></td>`)
+        insertOnPage.beforeend(mainnav,`<td><a href="index.php?mod=guildMarket&${sh.get()}" class="awesome-tabs">Mercado de la alianza<div class="navBG"></div></a></td>`)
     }
 
     static UI(){
@@ -1154,11 +1220,24 @@ class TimeSaver{
     }
 
     static StopBot(){
-        let timeSaver = document.getElementsByClassName("auto-settings")[0]
-        let botonPlay = timeSaver.children[3];
-        if (botonPlay.classList[2] == "show") {
-            //bot desactivado
-            botonPlay.click();
+        if(TimeSaver.Exist() == true){
+
+            let timeSaver = document.getElementsByClassName("auto-settings")[0]
+            let botonPlay = timeSaver.children[3];
+            if (botonPlay.classList[2] == "show") {
+                //bot desactivado
+                botonPlay.click();
+            }
+        }
+    }
+    static ContinueBot(){
+        if(TimeSaver.Exist() == true){
+            let timeSaver = document.getElementsByClassName("auto-settings")[0]
+            let botonPlay = timeSaver.children[3];
+            if (!!botonPlay.classList[2] == false) {
+                //bot desactivado
+                botonPlay.click();
+            }
         }
     }
     static StopOnClick(){
@@ -1237,12 +1316,31 @@ class ExtenderBotones{
 
 class GuardarOro{
     static UI(){
+        if(!!document.getElementById("gca-footer-links") == true){
         Menu.addConfig(`
             <h3>Guardar Oro</h3>
             <ul><label><input id="GuardarOroCheck" type="checkbox"> Guardar tu oro automaticamente<label></ul>
-            <ul><select id="TipoDeGuardado" class="GTSelectMenu"><option disabled>Mercado</option><option disabled>Casa de subastas</option><option>Entrenamiento</option></select></ul>
+            <ul><select id="TipoDeGuardado" class="GTSelectMenu">
+                <option>Mercado</option>
+                <option disabled>Casa de subastas</option>
+                <option>Entrenamiento</option>
+             </select>
+             </ul>
 
         `);
+        }else{
+        Menu.addConfig(`
+            <h3>Guardar Oro</h3>
+            <ul><label><input id="GuardarOroCheck" type="checkbox"> Guardar tu oro automaticamente<label></ul>
+            <ul><select id="TipoDeGuardado" class="GTSelectMenu">
+                <option title="Es necesario instalar la extencion Gladiatus Crazy Add On" disabled>Mercado</option>
+                <option disabled>Casa de subastas</option>
+                <option>Entrenamiento</option>
+             </select>
+             </ul>
+
+        `);
+        }
         let GuardarOroCheck = document.getElementById("GuardarOroCheck");
         ;
         let TipoDeGuardado = document.getElementById("TipoDeGuardado")
@@ -1306,17 +1404,11 @@ class GuardarOro{
     }
 
     static Guardar(){
-        let EntrenamientoLink = "https://s45-es.gladiatus.gameforge.com/game/index.php?mod=training&${sh.get()}";
+        let EntrenamientoLink = `https://s45-es.gladiatus.gameforge.com/game/index.php?mod=training&${sh.get()}`;
         let GuardarOroCheck = document.getElementById("GuardarOroCheck")
-        if(GuardarOroCheck.checked){
-            let tipoDeGuardado = {
-                get : ()=>{
-                    let TipoDeGuardado = document.getElementById("TipoDeGuardado");
-                    return TipoDeGuardado.selectedIndex
-                },
-                __ifNeedTriggerGold : ()=>{
 
-                },
+        function Entrenamiento() {
+            let tipoDeGuardado = {
                 __ifNeedChoiseAnStat : ()=>{
                     let SeleccionarEntrenamiento = document.getElementById("SeleccionarEntrenamiento");
                     return SeleccionarEntrenamiento.selectedIndex;
@@ -1347,16 +1439,16 @@ class GuardarOro{
                 }
             }
             if(localStorage.PlayerStatsPrices == undefined){
-                window.location.href = "https://s45-es.gladiatus.gameforge.com/game/index.php?mod=training&${sh.get()}";
+                window.location.href = EntrenamientoLink;
             }
-            data.init()
+                data.init()
             let training_box = document.getElementById("training_box");
             let trainButtons = {
                 get : ()=>{
                     let buttons = []
-                    for (let index = 1; index < 7; index++) {
-                        buttons.push(training_box.children[index].children[1].children[1])
-                    }
+                        for (let index = 1; index < 7; index++) {
+                            buttons.push(training_box.children[index].children[1].children[1])
+                        }
                     return buttons;
                 }
             }
@@ -1369,6 +1461,151 @@ class GuardarOro{
                 trainButtons.get()[tipoDeGuardado.__ifNeedChoiseAnStat()].click();
             }
         }
+
+        let MercadoDeAlianza = {
+            VerificarOro : function() {
+                let oroMaximoSuelto = parseInt(document.getElementById("OroMaximoSuelto").value);
+                let oro = parseInt(document.getElementById("sstat_gold_val").innerText.replace(/\./g, ''));
+                if(oro > oroMaximoSuelto){
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            IrAMercado : function(){
+                window.addEventListener("load", function(event) {
+                    TimeSaver.StopBot();
+                    window.location.href = `https://s45-es.gladiatus.gameforge.com/game/index.php?mod=guildMarket&${sh.get()}`
+                });
+            },
+            Comprar : function(){
+                let botonComprar = document.getElementById("CompraTodo");
+                botonComprar.click();
+            },
+            IrARecoger : function(){
+                //
+                window.location.href = `https://s45-es.gladiatus.gameforge.com/game/index.php?mod=packages&${sh.get()}&${getURL[getURL.length-1]}`
+
+            },
+            Recoger : function(){
+                document.getElementById("buscarRotativos").click()
+                let item = document.getElementById("MercadoFavoritos").children[1].children[2].children[0];
+                //item.dispatchEvent(dobleClickEvent)
+                var target = document.getElementById("inv");
+                var target2 = document.getElementById("MercadoFavoritos").children[1].children[2];
+
+
+                const observerInventario = new MutationObserver((mutationList) => {
+                    mutationList.forEach((mutation)=> {
+                        if(mutation.removedNodes.length){
+                            item.dispatchEvent(dobleClickEvent);
+                        }
+                    })
+                });
+                const observerMercadoFavoritos = new MutationObserver((mutationList) => {
+                    mutationList.forEach((mutation)=> {
+                        if(mutation.removedNodes.length){
+                            console.log('Eliminado', mutation.removedNodes[0]);
+                            window.location.href = `https://s45-es.gladiatus.gameforge.com/game/index.php?mod=guildMarket&${sh.get()}&r${getURL[getURL.length-1]}`
+                        }
+                    })
+                });
+
+                const observerOptions = {
+                    attributes: true,
+                    childList: true,
+                    subtree: true,
+                    characterData: false,
+                    attributeOldValue: false,
+                    characterDataOldValue: false
+                };
+
+                observerInventario.observe(target, observerOptions);
+                observerMercadoFavoritos.observe(target2, observerOptions);
+
+
+            },
+            Vender : function(){
+                var target = document.getElementById("inv");
+                let botonVender = document.getElementsByName("anbieten")[0];
+
+                 const observerInventario = new MutationObserver((mutationList) => {
+                    mutationList.forEach((mutation)=> {
+                        if(mutation.removedNodes.length){
+                            setTimeout(function(){
+                                let item = document.getElementById("inv").children[0];
+                                item.dispatchEvent(dobleClickEvent);
+
+                                //llenado de formulario
+                                document.getElementById("preis").value = getURL[getURL.length-1].slice(13);
+                                document.getElementById("dauer").value = 3;
+
+                                setTimeout(function(){
+                                    TimeSaver.ContinueBot()
+                                    botonVender.click();
+                                },2000);
+
+                            }, 2000);
+                        }
+                    })
+                });
+                const observerOptions = {
+                    attributes: true,
+                    childList: true,
+                    subtree: true,
+                    characterData: false,
+                    attributeOldValue: false,
+                    characterDataOldValue: false
+                };
+                observerInventario.observe(target, observerOptions);
+
+            },
+            ReescribirForm : function(){
+                let formulario = document.getElementById("sellForm");
+                formulario.action = formulario.action+="&vendido";
+            },
+            Run : function() {
+                if(MercadoDeAlianza.VerificarOro() && getURL[0] != "?mod=guildMarket"){
+                    MercadoDeAlianza.IrAMercado();
+                };
+                if(getURL[0] == "?mod=guildMarket" && getURL[getURL.length-1].slice(0,11).includes("precioventa") == true){
+                    MercadoDeAlianza.IrARecoger();
+                } else if(MercadoDeAlianza.VerificarOro() && getURL[0] == "?mod=guildMarket" && getURL[getURL.length-1].slice(0,11).includes("precioventa") == false){
+                    MercadoDeAlianza.Comprar();
+                }
+                if(getURL[0] == "?mod=packages" && getURL[getURL.length-1].slice(0,11).includes("precioventa") == true){
+                    MercadoDeAlianza.Recoger();
+                }
+                if(getURL[0] == "?mod=guildMarket" && getURL[getURL.length-1].slice(0,12).includes("rprecioventa") == true){
+                    MercadoDeAlianza.ReescribirForm()
+                    MercadoDeAlianza.Vender()
+                }
+                if(getURL[0] == "?mod=guildMarket" && getURL[getURL.length-1].includes("vendido") == true){
+                    window.addEventListener("load", function(event) {
+                        TimeSaver.ContinueBot();
+                    });
+                }
+            }
+        }
+
+        if(GuardarOroCheck.checked){
+            let TipoDeGuardado_value = document.getElementById("TipoDeGuardado").value
+
+            const GUARDAR_ORO = {
+                "Mercado" : function() {
+                    MercadoDeAlianza.Run();
+                },
+                "Casa de subastas" : function() {
+                    console.log("Casa de Subastas")
+                },
+                "Entrenamiento" : function() {
+                    Entrenamiento();
+                }
+            }
+
+            GUARDAR_ORO[TipoDeGuardado_value]();
+        }
+
 
 
     }
@@ -1482,22 +1719,22 @@ insertOnPage.beforeend(document.body,`
      font-weight: bold;
      font-size: 12px;
 }
-.SelectCategorias {
-    position: relative;
-    right: -39px;
-    top: -23px;
-    width: 130px;
-    font-size: 15px;
+ .SelectCategorias {
+     position: relative;
+     right: -39px;
+     top: -23px;
+     width: 130px;
+     font-size: 15px;
 }
-.Favoritos {
-    position: relative;
-    width: 294px;
-    height: 97px;
-    top: -24px;
-    background: rgb(222, 210, 173);
-    padding: 18px 0px 0px 16px;
-    overflow: scroll;
-    overflow-x: hidden;
+ .Favoritos {
+     position: relative;
+     width: 294px;
+     height: 97px;
+     top: -24px;
+     background: rgb(222, 210, 173);
+     padding: 18px 0px 0px 16px;
+     overflow: scroll;
+     overflow-x: hidden;
 }
  .Favoritos::-webkit-scrollbar {
      width: 10px;
@@ -1514,19 +1751,18 @@ insertOnPage.beforeend(document.body,`
  .Favoritos::-webkit-scrollbar-thumb:hover {
      background: #555;
 }
-.menuBotonPaquetes {
-    display: none;
-    position: absolute;
-    opacity: 1;
-    background: rgb(222, 210, 173);
-    top: 17px;
-    right: -15px;
-    padding: 10px;
-    z-index: 10;
-    max-width: 95px;
+ .menuBotonPaquetes {
+     display: none;
+     position: absolute;
+     opacity: 1;
+     background: rgb(222, 210, 173);
+     top: 17px;
+     right: -15px;
+     padding: 10px;
+     z-index: 10;
+     max-width: 95px;
 }
-
-#menuBotonPaquetes .icon-out {
+ #menuBotonPaquetes .icon-out {
      float: left;
 }
  #menuBotonPaquetes .icon {
@@ -1541,21 +1777,18 @@ insertOnPage.beforeend(document.body,`
  .gold-icon {
      background: transparent url('https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/buttons.png') -170px 0px no-repeat;
 }
-.tool-icon {
-    background: #9f824e url(https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/item.png) 0px -6881px no-repeat;
-    height: 25px !important;
-    width: 38px !important;
-    transform: scale(0.9);
+ .tool-icon {
+     background: #9f824e url(https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/item.png) 0px -6881px no-repeat;
+     height: 25px !important;
+     width: 38px !important;
+     transform: scale(0.9);
 }
-
-.pergamino-icon {
-    background: url(https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/item.png) 0px -8226px no-repeat;
-    height: 25px !important;
-    width: 38px !important;
-    transform: scale(0.8);
+ .pergamino-icon {
+     background: url(https://cdn.jsdelivr.net/gh/lpachecob/Gladiatus-Tools@main/images/item.png) 0px -8226px no-repeat;
+     height: 25px !important;
+     width: 38px !important;
+     transform: scale(0.8);
 }
-
-
  .extederPaquetes {
      position: absolute;
      right: -10px;
@@ -1633,17 +1866,50 @@ insertOnPage.beforeend(document.body,`
          right: 7px !important;
     }
 }
+ .gtools-icon {
+     background: #b79a63 url(https://es.gladiatus-tools.com/favicon.png);
+     background-size: cover;
+}
+ #MontodeRotativos{
+     position: relative;
+     top: -18px;
+     right: -306px;
+}
+ #paquetesMercado {
+     display: block;
+     background-color: #ded2ad;
+     max-height: 82px;
+     overflow: scroll;
+     overflow-x: hidden;
+}
+ #paquetesMercado::-webkit-scrollbar {
+     width: 10px;
+}
+/* Track */
+ #paquetesMercado::-webkit-scrollbar-track {
+     background: #f1f1f1;
+}
+/* Handle */
+ #paquetesMercado::-webkit-scrollbar-thumb {
+     background: #888;
+}
+/* Handle on hover */
+ #paquetesMercado::-webkit-scrollbar-thumb:hover {
+     background: #555;
+}
 
-.gtools-icon {
-    background: #b79a63 url(https://es.gladiatus-tools.com/favicon.png);
-    background-size: cover;
+.mensajeMercado h1 {
+    color: red;
+    font-size: 14px;
+    margin: -1px;
 }
-#MontodeRotativos{
+.mensajeMercado span {
     position: relative;
-    top: -18px;
-    right: -306px;
+    top: -4px;
 }
+
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 `)
 
 //////////////////////////////////////////////////////////////////////
