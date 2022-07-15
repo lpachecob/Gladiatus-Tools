@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Gladiatus Tools
 // @namespace     https://greasyfork.org/users/904482
-// @version       0.10.0
+// @version       0.11.0
 // @description   Set of tools and aids for the game Gladiatus
 // @author        lpachecob
 // @grant         none
@@ -1906,6 +1906,11 @@ insertOnPage.beforeend(document.body,`
 .mensajeMercado span {
     position: relative;
     top: -4px;
+}
+
+
+.charstats_value22{
+    top: 3px;
 }
 
 </style>
