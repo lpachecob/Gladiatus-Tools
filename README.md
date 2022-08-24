@@ -1,3 +1,6 @@
+## Deprecated - work migrate to https://github.com/lpachecob/Gladiatus-HealthyGame
+
+
 [![Greasy Fork](https://img.shields.io/greasyfork/v/444338?label=Version)](https://greasyfork.org/es/scripts/444338-gladiatus-tools)
 ![Greasy Fork](https://img.shields.io/greasyfork/dt/444338-gladiatus-tools)
 ![GitHub](https://img.shields.io/github/license/lpachecob/Gladiatus-Tools)
